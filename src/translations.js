@@ -6,8 +6,51 @@ export const translations = {
       experiences: "Experiencias",
       journal: "Diario",
       about: "Nosotros",
+      login: "Iniciar sesion",
+      register: "Registrarse",
+      authActionsLabel: "Acciones de autenticacion",
       bookNow: "Reservar ahora",
       searchPlaceholder: "Buscar destinos..."
+    },
+    userMenu: {
+      openLabel: "Abrir menu de usuario",
+      actionsLabel: "Acciones de usuario",
+      options: [
+        { key: "profile", label: "Administrar perfil" },
+        { key: "bookings", label: "Mis reservas" },
+        { key: "saved", label: "Estancias guardadas" },
+        { key: "settings", label: "Configuracion de cuenta" },
+        { key: "help", label: "Centro de ayuda" },
+        { key: "logout", label: "Cerrar sesion" }
+      ]
+    },
+    authDialog: {
+      badge: "Acceso requerido",
+      title: "Inicia sesion para reservar",
+      message: "Para continuar con Reservar ahora necesitas una cuenta activa en Horizon Stays.",
+      cancel: "Cancelar",
+      confirm: "Iniciar sesion"
+    },
+    reserveDialog: {
+      badge: "Reserva confirmada",
+      title: "Reservado",
+      message: "Tu estancia fue reservada con exito. Prepara tu proxima escapada.",
+      confirm: "Aceptar"
+    },
+    reserveCheckoutDialog: {
+      badge: "Finalizar reserva",
+      title: "Confirma los datos de tu reserva",
+      subtitle: "Verifica tu informacion personal y elige la tarjeta registrada para completar tu reserva.",
+      customerTitle: "Datos del cliente",
+      paymentTitle: "Metodo de pago",
+      paymentHint: "Selecciona una tarjeta registrada en tu perfil.",
+      labels: {
+        name: "Nombre",
+        email: "Correo",
+        phone: "Telefono"
+      },
+      cancel: "Cancelar",
+      confirm: "Aceptar y reservar"
     },
     hero: {
       title: "La Naturaleza, Refinada",
@@ -18,12 +61,25 @@ export const translations = {
       locationPlaceholder: "Alpes Suizos, Europa",
       date: "Entrada",
       searchBtn: "Buscar",
-      exploreBtn: "Explora Experiencias"
+      checkInLabel: "Fecha de entrada",
+      checkOutLabel: "Fecha de salida",
+      selectCheckInBtn: "Elegir entrada",
+      selectCheckOutBtn: "Elegir salida",
+      checkAvailabilityBtn: "Comprobar disponibilidad",
+      availableTitle: "Hay disponibilidad",
+      availableMessage: "Encontramos {count} alojamientos para esas fechas.",
+      unavailableTitle: "No hay disponibilidad",
+      unavailableMessage: "No encontramos alojamientos para ese rango. Prueba con otras fechas.",
+      invalidRangeTitle: "Rango de fechas inválido",
+      invalidRangeMessage: "La fecha de salida debe ser posterior a la fecha de entrada.",
+      missingDatesTitle: "Faltan fechas",
+      missingDatesMessage: "Selecciona fecha de entrada y salida para consultar disponibilidad.",
+      upcomingDatesLabel: "Próximas fechas disponibles"
     },
     collections: {
       label: "EL PORTAFOLIO",
       title: "Colecciones",
-      viewAll: "Ver todos los destinos",
+      viewAll: "Ver todos los Alojamientos →",
       mountain: "Escapadas de Montaña",
       lake: "Serenidad frente al Lago",
       forest: "Refugios en el Bosque"
@@ -36,6 +92,226 @@ export const translations = {
       aframeCount: "128 propiedades",
       vineyard: "Fincas en Viñedos",
       forestCabins: "Refugios en el Bosque"
+    },
+    categoriesPage: {
+      title: "Explorar Todas las Categorías",
+      subtitle: "Descubre alojamientos según tu estilo de viaje",
+      tag: "Experiencia",
+      propertiesCount: "128 propiedades",
+      cards: [
+        "Cabañas A-Frame",
+        "Fincas en Viñedos",
+        "Refugios en el Bosque",
+        "Casas en la Playa",
+        "Escapadas en la Montaña",
+        "Glamping",
+        "Cabañas Rústicas",
+        "Villas Modernas",
+        "Cabañas en el Lago"
+      ]
+    },
+    profileDashboard: {
+      nav: {
+        design: "Diseño",
+        experiences: "Experiencias",
+        about: "Sobre nosotros",
+        searchPlaceholder: "Buscar destinos...",
+        notificationsLabel: "Notificaciones",
+        backLabel: "Volver"
+      },
+      user: {
+        name: "Juliana Monroy",
+        badge: "Miembro premium"
+      },
+      title: "Mis Viajes",
+      subtitle: "Consulta y gestiona tus escapadas rurales exclusivas y estancias en fincas.",
+      sidebarItems: [
+        { key: "personal", label: "Informacion personal", active: false },
+        { key: "security", label: "Seguridad", active: false },
+        { key: "payments", label: "Pagos", active: false },
+        { key: "trips", label: "Mis Viajes", active: true },
+        { key: "favorites", label: "Favoritos", active: false }
+      ],
+      newStayButton: "Reservar nueva estancia",
+      tabs: [
+        { key: "upcoming", label: "Proximos" },
+        { key: "past", label: "Viajes pasados" },
+        { key: "cancelled", label: "Cancelados" }
+      ],
+      trips: [
+        {
+          listingId: 1,
+          status: "upcoming",
+          location: "Cotswolds, UK",
+          title: "The Stone Barn Farmhouse",
+          date: "Oct 12 - Oct 15, 2023",
+          guests: "4 huespedes",
+          image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80"
+        },
+        {
+          listingId: 6,
+          status: "upcoming",
+          location: "Tuscany, Italy",
+          title: "Olive Grove Villa and Vineyard",
+          date: "Nov 02 - Nov 10, 2023",
+          guests: "2 huespedes",
+          image: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=900&q=80"
+        },
+        {
+          listingId: 2,
+          status: "past",
+          location: "Santorini, Greece",
+          title: "Cliffside Escape",
+          date: "Aug 04 - Aug 09, 2023",
+          guests: "2 huespedes",
+          image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80"
+        },
+        {
+          listingId: 3,
+          status: "cancelled",
+          location: "Kyoto, Japan",
+          title: "Loft Apartment",
+          date: "Jul 15 - Jul 20, 2023",
+          guests: "3 huespedes",
+          image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80"
+        }
+      ],
+      editButton: "Modificar",
+      detailsButton: "Ver Detalles",
+      recommendedTitle: "Seleccionado para ti",
+      recommendedLink: "Explorar todas las experiencias",
+      recommendedStays: [
+        {
+          country: "Norway",
+          title: "The Midnight Pine Cabin",
+          price: "$450 / noche",
+          categoryKey: "forest",
+          image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+          country: "Switzerland",
+          title: "Alps Echo Manor",
+          price: "$890 / noche",
+          categoryKey: "mountain",
+          image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+          country: "France",
+          title: "Provence Lavender Mill",
+          price: "$320 / noche",
+          categoryKey: "vineyards",
+          image: "https://images.unsplash.com/photo-1472224371017-08207f84aaae?auto=format&fit=crop&w=700&q=80"
+        }
+      ],
+      recommendedImages: [
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=700&q=80",
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80",
+        "https://images.unsplash.com/photo-1472224371017-08207f84aaae?auto=format&fit=crop&w=700&q=80"
+      ],
+      personalInfo: {
+        title: "Informacion personal",
+        subtitle: "Gestiona la informacion de tu cuenta y lo que pueden ver otros usuarios.",
+        profileSectionTitle: "Perfil",
+        profileSectionHint: "Es posible que otros usuarios puedan ver parte de esta informacion al usar los servicios.",
+        contactSectionTitle: "Informacion de contacto",
+        enableEditButton: "Habilitar edicion",
+        genderOptions: ["Mujer", "Hombre", "No binario", "Prefiero no decirlo"],
+        labels: {
+          photo: "Foto",
+          name: "Nombre",
+          birthDate: "Fecha de nacimiento",
+          gender: "Sexo",
+          idDocument: "Documento",
+          password: "Contrasena",
+          firstName: "Nombre",
+          lastName: "Apellido",
+          email: "Correo electronico",
+          phone: "Telefono",
+          address: "Direccion",
+          city: "Ciudad",
+          country: "Pais",
+          bio: "Biografia"
+        },
+        cancelButton: "Cancelar",
+        saveButton: "Guardar cambios",
+        initialValues: {
+          photo: "Anade una foto para personalizar tu cuenta",
+          firstName: "Juliana",
+          lastName: "Monroy",
+          birthDate: "22 de agosto de 1996",
+          gender: "Mujer",
+          idDocument: "DNI 74283915",
+          passwordStatus: "Ultima modificacion: 6 jul. 2016",
+          email: "juliana.monroy@horizonstays.com",
+          phone: "+34 600 123 456",
+          address: "Calle Aribau 128",
+          city: "Barcelona",
+          country: "España",
+          bio: "Amante de las escapadas rurales y de la arquitectura sostenible."
+        }
+      },
+      security: {
+        title: "Seguridad",
+        subtitle: "Protege tu cuenta con autenticacion adicional y controles de acceso.",
+        initialValues: {
+          twoStepEnabled: false,
+          alertsByEmail: true
+        },
+        twoStep: {
+          title: "Verificacion en dos pasos",
+          description: "Solicita un codigo adicional al iniciar sesion desde dispositivos nuevos.",
+          toggleLabel: "Activar verificacion en dos pasos",
+          enabledHint: "Tu cuenta esta protegida con un segundo factor de autenticacion."
+        },
+        activeSessionsTitle: "Sesiones activas",
+        sessions: [
+          { device: "MacBook Pro - Chrome", lastAccess: "Activo ahora" },
+          { device: "iPhone 14 - Safari", lastAccess: "Hace 1 hora" },
+          { device: "iPad - App Horizon", lastAccess: "Hace 2 dias" }
+        ],
+        closeOthersButton: "Cerrar otras sesiones",
+        alertsTitle: "Alertas y recuperacion",
+        alertsByEmailLabel: "Recibir alertas de seguridad por correo",
+        recoveryCodeLabel: "Codigo de recuperacion",
+        generateCodeButton: "Generar codigo"
+      },
+      payments: {
+        title: "Pagos",
+        subtitle: "Administra tus metodos de pago, facturas y configuraciones de cobro.",
+        methodsTitle: "Metodos de pago",
+        addMethodButton: "Agregar metodo",
+        setDefaultButton: "Definir principal",
+        defaultLabel: "Principal",
+        billingTitle: "Facturacion",
+        autopayLabel: "Pago automatico para reservas confirmadas",
+        downloadButton: "Descargar",
+        initialValues: {
+          autopayEnabled: true,
+          selectedMethodId: "card_visa"
+        },
+        methods: [
+          { id: "card_visa", brand: "Visa", maskedNumber: "**** 1942", holder: "Juliana Monroy" },
+          { id: "card_master", brand: "Mastercard", maskedNumber: "**** 4481", holder: "Juliana Monroy" }
+        ],
+        invoices: [
+          { id: "inv_001", period: "Ene 2026", amount: "$420", status: "Pagada" },
+          { id: "inv_002", period: "Dic 2025", amount: "$310", status: "Pagada" },
+          { id: "inv_003", period: "Nov 2025", amount: "$285", status: "Pagada" }
+        ]
+      },
+      favorites: {
+        title: "Favoritos",
+        subtitle: "Aqui veras los alojamientos marcados con corazon.",
+        emptyMessage: "Aun no has agregado alojamientos a favoritos.",
+        exploreButton: "Explorar alojamientos",
+        removeButton: "Quitar",
+        viewButton: "Ver detalles",
+        removeFavoriteLabel: "Quitar de favoritos"
+      },
+      footer: {
+        links: ["Politica de Privacidad", "Terminos de Servicio", "Soporte"],
+        rights: "© 2026 Horizon Stays. Todos los derechos reservados."
+      }
     },
     stats: {
       properties: "Propiedades",
@@ -50,7 +326,150 @@ export const translations = {
     listings: {
       featuredAccommodations: "Alojamientos Destacados",
       additionalStays: "Alojamientos Disponibles",
-      noResults: "No encontramos alojamientos con esos filtros"
+      noResults: "No encontramos alojamientos con esos filtros",
+      perNight: "noche"
+    },
+    catalog: {
+      breadcrumb: "Inicio / Alojamientos en Alpes",
+      title: "Alojamientos disponibles",
+      subtitle: "Encuentra y reserva el alojamiento perfecto para tus fechas",
+      showMap: "Mostrar mapa",
+      closeLabel: "Cerrar vista de alojamientos",
+      dateHint: "12/04/24",
+      placeholders: {
+        destination: "Destinos",
+        date: "Fecha"
+      },
+      filters: {
+        destination: "Destinos",
+        date: "Fecha",
+        price: "Precio",
+        minPrice: "Min: 200",
+        rooms: "Habitaciones",
+        anyRoom: "Cualquier cantidad",
+        services: "Servicios",
+        serviceOptions: [
+          { key: "wifi", label: "Wi-Fi" },
+          { key: "pool", label: "Piscina" },
+          { key: "kitchen", label: "Cocina" },
+          { key: "parking", label: "Estacionamiento" }
+        ]
+      }
+    },
+    detail: {
+      breadcrumbPrefix: "Inicio",
+      reviews: "(132 reseñas)",
+      entirePlace: "Alojamiento entero",
+      beds: "5 camas",
+      guests: "huespedes",
+      hostTitle: "Descripcion del alojamiento",
+      perLabel: "por",
+      noCharge: "No se cobrara nada aun",
+      duration: "Duracion",
+      nights: "noches",
+      totalBeforeTax: "Total antes de impuestos",
+      whatThisPlaceOffers: "Lo que ofrece este lugar",
+      nightlyRate: "Tarifa por noche",
+      serviceFee: "Cargo por servicio",
+      selectDates: "Selecciona fechas",
+      mapLink: "Mostrar mapa",
+      tabs: ["Detalles", "Disponibilidad", "Reseñas", "Ubicación"],
+      monthLabel: "Mayo 2024",
+      chooseDates: "Elige tus fechas, reserva y activa una confirmacion instantanea.",
+      contactHost: "Contactar anfitrión",
+      hostBadge: "Superanfitrion",
+      hostName: "Mathieu",
+      hostSince: "Anfitrión desde 2018",
+      hostBio: "Apasionado por crear experiencias memorables en montaña y naturaleza.",
+      hostDialog: {
+        name: "Mathieu",
+        badge: "Superhost",
+        properties: "8 propiedades",
+        bio: "¡Hola! Soy Mathieu, tu anfitrión. Estoy aqui para asegurarme de que tengas una estancia increible y responder cualquier pregunta que puedas tener.",
+        contactButton: "Contacta al Host",
+        profileButton: "Ver Perfil",
+        image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=320&h=320&fit=crop&crop=face",
+        stats: [
+          { icon: "★", value: "4.9 / 5", label: "Valoracion promedio" },
+          { icon: "👥", value: "240+", label: "Huespedes hospedados" },
+          { icon: "◷", value: "3 Años", label: "Tiempo operando" }
+        ]
+      },
+      hostChat: {
+        title: "Chat con anfitrion",
+        status: "En linea",
+        placeholder: "Escribe un mensaje...",
+        sendLabel: "Enviar mensaje",
+        minimizeLabel: "Minimizar chat",
+        expandLabel: "Expandir chat",
+        collapseLabel: "Contraer chat",
+        hideLabel: "Esconder chat",
+        showLabel: "Mostrar chat",
+        closeLabel: "Cerrar chat",
+        youLabel: "(Tu)",
+        testPreviewName: "Chat de prueba",
+        testPreviewTime: "7:12",
+        testPreviewSnippet: "✓✓ Asi se veria otra conversacion mini.",
+        messages: [
+          {
+            id: "host-1",
+            sender: "host",
+            text: "Hola, soy Mathieu. Estoy aqui para ayudarte con tu reserva.",
+            time: "25min"
+          },
+          {
+            id: "guest-1",
+            sender: "guest",
+            text: "Hola, estoy planificando un fin de semana para dos a finales de mayo.",
+            time: "20min"
+          },
+          {
+            id: "host-2",
+            sender: "host",
+            text: "Excelente, esas fechas suelen estar disponibles. Si quieres te comparto actividades cercanas.",
+            time: "15min"
+          }
+        ]
+      },
+      hostProfileTitle: "Perfil del anfitrión",
+      hostSpecialtyOne: "Respuesta rápida y personalizada",
+      hostSpecialtyTwo: "Consejos locales de montaña",
+      hostSpecialtyThree: "Atención premium durante toda la estadía",
+      trustTitle: "Tu seguridad es nuestra prioridad",
+      mapPreviewAlt: "Vista previa del mapa",
+      trustItems: ["Mantienes datos cifrados", "Validamos anfitriones", "Proteccion contra fraudes", "Soporte 24/7"],
+      reviewSummary: "4.9 / 5 (132 reseñas)",
+      reviewWord: "reseñas",
+      whereYouWillSleep: "Dónde dormirás",
+      quickHighlights: ["Alojamiento entero", "Limpieza impecable", "Ubicación espectacular", "Atención premium"],
+      sleepFeatures: [
+        { title: "Alojamiento entero", description: "Lo ocupas por completo." },
+        { title: "Una taza escenarios encantadores", description: "Espacios pensados para descansar." },
+        { title: "Limpieza impecable", description: "Evaluación superior de huéspedes." },
+        { title: "Estacionamiento privado gratuito", description: "A minutos del acceso principal." }
+      ],
+      listingOverrides: {
+        "1": {
+          description: "Cabana tranquila junto al fiordo con vistas a la montaña, interiores acogedores y terraza privada.",
+          amenities: ["Wifi", "Chimenea", "Vista al lago", "Cocina"]
+        },
+        "2": {
+          description: "Retiro luminoso sobre el acantilado con brisa marina, terraza al atardecer y decoracion minimalista.",
+          amenities: ["Vista al mar", "Desayuno", "Aire acondicionado", "Piscina"]
+        },
+        "5": {
+          description: "Estudio compacto cerca de la costa, con luz natural y barrios locales caminables.",
+          amenities: ["Wifi", "Kitchenette", "Balcón con brisa marina", "Self check-in"]
+        },
+        "3": {
+          description: "Loft moderno en una zona tranquila cerca de templos, cafeterías y rincones gastronómicos locales.",
+          amenities: ["Wifi rapido", "Balcon", "Espacio de trabajo", "Lavadora"]
+        },
+        "4": {
+          description: "Loft refinado con materiales premium, amplio salon y una atmosfera elegante de ciudad.",
+          amenities: ["Conserje", "Smart TV", "Cocina premium", "Ropa de cama premium"]
+        }
+      }
     },
     footer: {
       description: "Descubre estancias auténticas en destinos únicos, curadas para experiencias memorables.",
@@ -72,8 +491,51 @@ export const translations = {
       experiences: "Experiences",
       journal: "Journal",
       about: "About",
+      login: "Sign in",
+      register: "Register",
+      authActionsLabel: "Authentication actions",
       bookNow: "Book Now",
       searchPlaceholder: "Search destinations..."
+    },
+    userMenu: {
+      openLabel: "Open user menu",
+      actionsLabel: "User actions",
+      options: [
+        { key: "profile", label: "Manage profile" },
+        { key: "bookings", label: "My bookings" },
+        { key: "saved", label: "Saved stays" },
+        { key: "settings", label: "Account settings" },
+        { key: "help", label: "Help center" },
+        { key: "logout", label: "Sign out" }
+      ]
+    },
+    authDialog: {
+      badge: "Access required",
+      title: "Sign in to reserve",
+      message: "To continue with Book Now you need an active Horizon Stays account.",
+      cancel: "Cancel",
+      confirm: "Sign in"
+    },
+    reserveDialog: {
+      badge: "Reservation confirmed",
+      title: "Reserved",
+      message: "Your stay was booked successfully. Get ready for your next getaway.",
+      confirm: "Great"
+    },
+    reserveCheckoutDialog: {
+      badge: "Complete reservation",
+      title: "Confirm your reservation details",
+      subtitle: "Review your customer information and choose a saved card to complete your booking.",
+      customerTitle: "Customer details",
+      paymentTitle: "Payment method",
+      paymentHint: "Choose a card saved in your profile.",
+      labels: {
+        name: "Name",
+        email: "Email",
+        phone: "Phone"
+      },
+      cancel: "Cancel",
+      confirm: "Accept and reserve"
     },
     hero: {
       title: "Nature, Refined",
@@ -84,12 +546,25 @@ export const translations = {
       locationPlaceholder: "Swiss Alps, Europe",
       date: "Check-in",
       searchBtn: "Search",
-      exploreBtn: "Explore Experiences"
+      checkInLabel: "Check-in date",
+      checkOutLabel: "Check-out date",
+      selectCheckInBtn: "Choose check-in",
+      selectCheckOutBtn: "Choose check-out",
+      checkAvailabilityBtn: "Check availability",
+      availableTitle: "Availability found",
+      availableMessage: "We found {count} stays for those dates.",
+      unavailableTitle: "No availability",
+      unavailableMessage: "No stays found for that range. Try different dates.",
+      invalidRangeTitle: "Invalid date range",
+      invalidRangeMessage: "Check-out date must be after check-in date.",
+      missingDatesTitle: "Missing dates",
+      missingDatesMessage: "Select check-in and check-out to check availability.",
+      upcomingDatesLabel: "Upcoming available dates"
     },
     collections: {
       label: "THE PORTFOLIO",
       title: "Collections",
-      viewAll: "View all destinations",
+      viewAll: "View all accommodations →",
       mountain: "Mountain Escapes",
       lake: "Lakeside Serenity",
       forest: "Forest Retreats"
@@ -102,6 +577,226 @@ export const translations = {
       aframeCount: "128 properties",
       vineyard: "Vineyard Estates",
       forestCabins: "Forest Retreats"
+    },
+    categoriesPage: {
+      title: "Explore All Categories",
+      subtitle: "Discover stays based on your travel style",
+      tag: "Experience",
+      propertiesCount: "128 properties",
+      cards: [
+        "A-Frame Cabins",
+        "Vineyard Estates",
+        "Forest Retreats",
+        "Beach Homes",
+        "Mountain Escapes",
+        "Glamping",
+        "Rustic Cabins",
+        "Modern Villas",
+        "Lake Cabins"
+      ]
+    },
+    profileDashboard: {
+      nav: {
+        design: "Design",
+        experiences: "Experiences",
+        about: "About us",
+        searchPlaceholder: "Search destinations...",
+        notificationsLabel: "Notifications",
+        backLabel: "Go back"
+      },
+      user: {
+        name: "Juliana Monroy",
+        badge: "Premium member"
+      },
+      title: "My Trips",
+      subtitle: "Review and manage your exclusive rural getaways and country stays.",
+      sidebarItems: [
+        { key: "personal", label: "Personal information", active: false },
+        { key: "security", label: "Security", active: false },
+        { key: "payments", label: "Payments", active: false },
+        { key: "trips", label: "My Trips", active: true },
+        { key: "favorites", label: "Favorites", active: false }
+      ],
+      newStayButton: "Book new stay",
+      tabs: [
+        { key: "upcoming", label: "Upcoming" },
+        { key: "past", label: "Past trips" },
+        { key: "cancelled", label: "Cancelled" }
+      ],
+      trips: [
+        {
+          listingId: 1,
+          status: "upcoming",
+          location: "Cotswolds, UK",
+          title: "The Stone Barn Farmhouse",
+          date: "Oct 12 - Oct 15, 2023",
+          guests: "4 guests",
+          image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80"
+        },
+        {
+          listingId: 6,
+          status: "upcoming",
+          location: "Tuscany, Italy",
+          title: "Olive Grove Villa and Vineyard",
+          date: "Nov 02 - Nov 10, 2023",
+          guests: "2 guests",
+          image: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=900&q=80"
+        },
+        {
+          listingId: 2,
+          status: "past",
+          location: "Santorini, Greece",
+          title: "Cliffside Escape",
+          date: "Aug 04 - Aug 09, 2023",
+          guests: "2 guests",
+          image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80"
+        },
+        {
+          listingId: 3,
+          status: "cancelled",
+          location: "Kyoto, Japan",
+          title: "Loft Apartment",
+          date: "Jul 15 - Jul 20, 2023",
+          guests: "3 guests",
+          image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80"
+        }
+      ],
+      editButton: "Edit",
+      detailsButton: "View details",
+      recommendedTitle: "Selected for you",
+      recommendedLink: "Explore all experiences",
+      recommendedStays: [
+        {
+          country: "Norway",
+          title: "The Midnight Pine Cabin",
+          price: "$450 / night",
+          categoryKey: "forest",
+          image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+          country: "Switzerland",
+          title: "Alps Echo Manor",
+          price: "$890 / night",
+          categoryKey: "mountain",
+          image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+          country: "France",
+          title: "Provence Lavender Mill",
+          price: "$320 / night",
+          categoryKey: "vineyards",
+          image: "https://images.unsplash.com/photo-1472224371017-08207f84aaae?auto=format&fit=crop&w=700&q=80"
+        }
+      ],
+      recommendedImages: [
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=700&q=80",
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80",
+        "https://images.unsplash.com/photo-1472224371017-08207f84aaae?auto=format&fit=crop&w=700&q=80"
+      ],
+      personalInfo: {
+        title: "Personal information",
+        subtitle: "Manage your account information and what other users can see.",
+        profileSectionTitle: "Profile",
+        profileSectionHint: "Other users may be able to see parts of this information when using services.",
+        contactSectionTitle: "Contact information",
+        enableEditButton: "Enable editing",
+        genderOptions: ["Female", "Male", "Non-binary", "Prefer not to say"],
+        labels: {
+          photo: "Photo",
+          name: "Name",
+          birthDate: "Birth date",
+          gender: "Gender",
+          idDocument: "Document",
+          password: "Password",
+          firstName: "First name",
+          lastName: "Last name",
+          email: "Email",
+          phone: "Phone",
+          address: "Address",
+          city: "City",
+          country: "Country",
+          bio: "Bio"
+        },
+        cancelButton: "Cancel",
+        saveButton: "Save changes",
+        initialValues: {
+          photo: "Add a photo to personalize your account",
+          firstName: "Juliana",
+          lastName: "Monroy",
+          birthDate: "August 22, 1996",
+          gender: "Female",
+          idDocument: "ID 74283915",
+          passwordStatus: "Last changed: Jul 6, 2016",
+          email: "juliana.monroy@horizonstays.com",
+          phone: "+34 600 123 456",
+          address: "128 Aribau Street",
+          city: "Barcelona",
+          country: "Spain",
+          bio: "Loves rural escapes and sustainable architecture experiences."
+        }
+      },
+      security: {
+        title: "Security",
+        subtitle: "Protect your account with additional authentication and access controls.",
+        initialValues: {
+          twoStepEnabled: false,
+          alertsByEmail: true
+        },
+        twoStep: {
+          title: "Two-step verification",
+          description: "Require an extra code when signing in from new devices.",
+          toggleLabel: "Enable two-step verification",
+          enabledHint: "Your account is protected with a second authentication factor."
+        },
+        activeSessionsTitle: "Active sessions",
+        sessions: [
+          { device: "MacBook Pro - Chrome", lastAccess: "Active now" },
+          { device: "iPhone 14 - Safari", lastAccess: "1 hour ago" },
+          { device: "iPad - Horizon app", lastAccess: "2 days ago" }
+        ],
+        closeOthersButton: "Close other sessions",
+        alertsTitle: "Alerts and recovery",
+        alertsByEmailLabel: "Receive security alerts by email",
+        recoveryCodeLabel: "Recovery code",
+        generateCodeButton: "Generate code"
+      },
+      payments: {
+        title: "Payments",
+        subtitle: "Manage your payment methods, invoices, and billing settings.",
+        methodsTitle: "Payment methods",
+        addMethodButton: "Add method",
+        setDefaultButton: "Set default",
+        defaultLabel: "Default",
+        billingTitle: "Billing",
+        autopayLabel: "Autopay for confirmed bookings",
+        downloadButton: "Download",
+        initialValues: {
+          autopayEnabled: true,
+          selectedMethodId: "card_visa"
+        },
+        methods: [
+          { id: "card_visa", brand: "Visa", maskedNumber: "**** 1942", holder: "Juliana Monroy" },
+          { id: "card_master", brand: "Mastercard", maskedNumber: "**** 4481", holder: "Juliana Monroy" }
+        ],
+        invoices: [
+          { id: "inv_001", period: "Jan 2026", amount: "$420", status: "Paid" },
+          { id: "inv_002", period: "Dec 2025", amount: "$310", status: "Paid" },
+          { id: "inv_003", period: "Nov 2025", amount: "$285", status: "Paid" }
+        ]
+      },
+      favorites: {
+        title: "Favorites",
+        subtitle: "Here you can see stays marked with hearts.",
+        emptyMessage: "You have not added favorite stays yet.",
+        exploreButton: "Explore stays",
+        removeButton: "Remove",
+        viewButton: "View details",
+        removeFavoriteLabel: "Remove from favorites"
+      },
+      footer: {
+        links: ["Privacy Policy", "Terms of Service", "Support"],
+        rights: "© 2026 Horizon Stays. All rights reserved."
+      }
     },
     stats: {
       properties: "Properties",
@@ -116,7 +811,150 @@ export const translations = {
     listings: {
       featuredAccommodations: "Featured Accommodations",
       additionalStays: "More Available Stays",
-      noResults: "We couldn't find stays matching those filters"
+      noResults: "We couldn't find stays matching those filters",
+      perNight: "night"
+    },
+    catalog: {
+      breadcrumb: "Home / Stays in Alps",
+      title: "Available stays",
+      subtitle: "Find and book the perfect stay for your dates",
+      showMap: "Show map",
+      closeLabel: "Close stays view",
+      dateHint: "04/12/24",
+      placeholders: {
+        destination: "Destinations",
+        date: "Date"
+      },
+      filters: {
+        destination: "Destinations",
+        date: "Date",
+        price: "Price",
+        minPrice: "Min: 200",
+        rooms: "Bedrooms",
+        anyRoom: "Any amount",
+        services: "Services",
+        serviceOptions: [
+          { key: "wifi", label: "Wi-Fi" },
+          { key: "pool", label: "Pool" },
+          { key: "kitchen", label: "Kitchen" },
+          { key: "parking", label: "Parking" }
+        ]
+      }
+    },
+    detail: {
+      breadcrumbPrefix: "Home",
+      reviews: "(132 reviews)",
+      entirePlace: "Entire place",
+      beds: "5 beds",
+      guests: "guests",
+      hostTitle: "About this stay",
+      perLabel: "per",
+      noCharge: "You will not be charged yet",
+      duration: "Duration",
+      nights: "nights",
+      totalBeforeTax: "Total before taxes",
+      whatThisPlaceOffers: "What this place offers",
+      nightlyRate: "Nightly rate",
+      serviceFee: "Service fee",
+      selectDates: "Select dates",
+      mapLink: "Show map",
+      tabs: ["Details", "Availability", "Reviews", "Location"],
+      monthLabel: "May 2024",
+      chooseDates: "Pick your dates, book, and enable instant confirmation.",
+      contactHost: "Contact host",
+      hostBadge: "Superhost",
+      hostName: "Mathieu",
+      hostSince: "Hosting since 2018",
+      hostBio: "Focused on memorable mountain and nature experiences.",
+      hostDialog: {
+        name: "Mathieu",
+        badge: "Superhost",
+        properties: "8 properties",
+        bio: "Hi! I am Mathieu, your host. I am here to make sure you have an incredible stay and to answer any questions you may have.",
+        contactButton: "Contact Host",
+        profileButton: "View Profile",
+        image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=320&h=320&fit=crop&crop=face",
+        stats: [
+          { icon: "★", value: "4.9 / 5", label: "Average rating" },
+          { icon: "👥", value: "240+", label: "Hosted guests" },
+          { icon: "◷", value: "3 Years", label: "Time hosting" }
+        ]
+      },
+      hostChat: {
+        title: "Host chat",
+        status: "Online",
+        placeholder: "Type a message...",
+        sendLabel: "Send message",
+        minimizeLabel: "Minimize chat",
+        expandLabel: "Expand chat",
+        collapseLabel: "Collapse chat",
+        hideLabel: "Hide chat",
+        showLabel: "Show chat",
+        closeLabel: "Close chat",
+        youLabel: "(You)",
+        testPreviewName: "Test chat",
+        testPreviewTime: "7:12",
+        testPreviewSnippet: "✓✓ This is how another mini conversation would look.",
+        messages: [
+          {
+            id: "host-1",
+            sender: "host",
+            text: "Hi, I am Mathieu. I am here to help with your booking.",
+            time: "25min"
+          },
+          {
+            id: "guest-1",
+            sender: "guest",
+            text: "Hi, I am planning a weekend getaway for two at the end of May.",
+            time: "20min"
+          },
+          {
+            id: "host-2",
+            sender: "host",
+            text: "Great choice, those dates are usually available. I can also share nearby activities.",
+            time: "15min"
+          }
+        ]
+      },
+      hostProfileTitle: "Host profile",
+      hostSpecialtyOne: "Fast and personal response",
+      hostSpecialtyTwo: "Local mountain recommendations",
+      hostSpecialtyThree: "Premium care throughout your stay",
+      trustTitle: "Your safety is our priority",
+      mapPreviewAlt: "Map preview",
+      trustItems: ["Your data stays encrypted", "Hosts are verified", "Fraud protection included", "24/7 support"],
+      reviewSummary: "4.9 / 5 (132 reviews)",
+      reviewWord: "reviews",
+      whereYouWillSleep: "Where you'll sleep",
+      quickHighlights: ["Entire place", "Spotless cleaning", "Scenic location", "Premium host care"],
+      sleepFeatures: [
+        { title: "Entire place", description: "You get the full property." },
+        { title: "Cozy sleeping scenes", description: "Rest-ready spaces with mountain feel." },
+        { title: "Spotless cleaning", description: "Top-rated by recent guests." },
+        { title: "Free private parking", description: "Minutes from main access." }
+      ],
+      listingOverrides: {
+        "1": {
+          description: "A tranquil cabin by the fjord with mountain views, cozy interiors and private deck.",
+          amenities: ["Wifi", "Fireplace", "Lake view", "Kitchen"]
+        },
+        "2": {
+          description: "A bright retreat on the cliff with sea breeze, sunset terrace and minimalist decor.",
+          amenities: ["Ocean view", "Breakfast", "Air conditioning", "Pool"]
+        },
+        "5": {
+          description: "Compact studio near the coast with natural light and walkable local neighborhoods.",
+          amenities: ["Wifi", "Kitchenette", "Sea breeze balcony", "Self check-in"]
+        },
+        "3": {
+          description: "Modern loft in a quiet area close to temples, cafes and local food spots.",
+          amenities: ["Fast wifi", "Balcony", "Workspace", "Washer"]
+        },
+        "4": {
+          description: "Refined loft with premium materials, spacious lounge and elegant city atmosphere.",
+          amenities: ["Concierge", "Smart TV", "Chef kitchen", "Premium bedding"]
+        }
+      }
     },
     footer: {
       description: "Discover authentic stays in unique destinations, curated for memorable experiences.",
