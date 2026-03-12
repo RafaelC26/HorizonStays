@@ -1,13 +1,187 @@
 import DatePicker from "react-datepicker";
-import { differenceInCalendarDays } from "date-fns";
+import { addDays, differenceInCalendarDays } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+const parseIsoDate = (isoValue) => {
+  if (!isoValue) {
+    return null;
+  }
+
+  const [year, month, day] = isoValue.split("-").map(Number);
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+};
+
+const toIsoDate = (date) => {
+  const safeDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+  return safeDate.toISOString().slice(0, 10);
+};
+
+function DetailDateRangeField({
+  language,
+  startDate,
+  endDate,
+  onChangeCheckIn,
+  onChangeCheckOut,
+  minDate
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [hoverDate, setHoverDate] = useState(null);
+
+  const monthNames = language === "es"
+    ? ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  const yearOptions = useMemo(() => {
+    const baseYear = new Date().getFullYear();
+    return Array.from({ length: 9 }, (_, index) => baseYear - 2 + index);
+  }, []);
+
+  const getRangeBounds = (rangeStart, rangeEnd) => {
+    if (!rangeStart || !rangeEnd) {
+      return null;
+    }
+
+    return rangeStart <= rangeEnd
+      ? { rangeMin: rangeStart, rangeMax: rangeEnd }
+      : { rangeMin: rangeEnd, rangeMax: rangeStart };
+  };
+
+  const formatRangeLabel = () => {
+    if (!startDate && !endDate) {
+      return "Select dates";
+    }
+
+    const formatter = new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    if (startDate && endDate) {
+      return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
+    }
+
+    return formatter.format(startDate || endDate);
+  };
+
+  return (
+    <DatePicker
+      selected={startDate}
+      onChange={(dates) => {
+        const [nextStart, nextEnd] = dates;
+        onChangeCheckIn?.(nextStart || null);
+        onChangeCheckOut?.(nextEnd || null);
+
+        if (nextStart && nextEnd) {
+          setHoverDate(null);
+          setIsOpen(false);
+        }
+      }}
+      startDate={startDate}
+      endDate={endDate}
+      selectsRange
+      minDate={minDate}
+      shouldCloseOnSelect={false}
+      open={isOpen}
+      onInputClick={() => setIsOpen(true)}
+      onClickOutside={() => {
+        setHoverDate(null);
+        setIsOpen(false);
+      }}
+      onCalendarClose={() => setHoverDate(null)}
+      onDayMouseEnter={(date) => {
+        if (startDate && !endDate) {
+          setHoverDate(date);
+        }
+      }}
+      popperPlacement="bottom-start"
+      popperClassName="heroDatePickerPopper"
+      calendarClassName="heroDatePickerCalendar"
+      formatWeekDay={(weekday) => weekday.slice(0, 1).toUpperCase()}
+      customInput={(
+        <button type="button" className="detailDateRangeButton">
+          {formatRangeLabel()}
+        </button>
+      )}
+      dayClassName={(date) => {
+        const committedBounds = getRangeBounds(startDate, endDate);
+        const previewBounds = !endDate ? getRangeBounds(startDate, hoverDate) : null;
+        const activeBounds = committedBounds || previewBounds;
+        const isInRange = Boolean(activeBounds && date >= activeBounds.rangeMin && date <= activeBounds.rangeMax);
+        const isPreview = Boolean(!committedBounds && previewBounds);
+
+        if (!isInRange) {
+          return undefined;
+        }
+
+        if (activeBounds && date.getTime() === activeBounds.rangeMin.getTime()) {
+          return `${isPreview ? "heroDayPreview" : "heroDayInRange"} heroDayRangeStart`;
+        }
+
+        if (activeBounds && date.getTime() === activeBounds.rangeMax.getTime()) {
+          return `${isPreview ? "heroDayPreview" : "heroDayInRange"} heroDayRangeEnd`;
+        }
+
+        return isPreview ? "heroDayPreview" : "heroDayInRange";
+      }}
+      renderDayContents={(dayOfMonth, date) => {
+        const committedBounds = getRangeBounds(startDate, endDate);
+        const previewBounds = !endDate ? getRangeBounds(startDate, hoverDate) : null;
+        const activeBounds = committedBounds || previewBounds;
+        const isInRange = Boolean(activeBounds && date >= activeBounds.rangeMin && date <= activeBounds.rangeMax);
+        const rangeStep = isInRange
+          ? Math.max(0, Math.min(20, differenceInCalendarDays(date, activeBounds.rangeMin)))
+          : 0;
+
+        return (
+          <span
+            className={`heroDayBubble ${isInRange ? "inRange" : ""}`.trim()}
+            style={isInRange ? { "--hero-range-step": rangeStep } : undefined}
+          >
+            {dayOfMonth}
+          </span>
+        );
+      }}
+      renderCustomHeader={({ date, changeMonth, changeYear }) => (
+        <div className="heroCalendarHeaderControls">
+          <select
+            className="heroCalendarSelect"
+            value={date.getMonth()}
+            onChange={(event) => changeMonth(Number(event.target.value))}
+          >
+            {monthNames.map((monthName, index) => (
+              <option key={monthName} value={index}>{monthName}</option>
+            ))}
+          </select>
+          <select
+            className="heroCalendarSelect"
+            value={date.getFullYear()}
+            onChange={(event) => changeYear(Number(event.target.value))}
+          >
+            {yearOptions.map((year) => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+      )}
+    />
+  );
+}
 
 function StayDetailPage({
   t,
   language,
   heroFilters,
+  checkInDate: initialCheckInDate,
+  checkOutDate: initialCheckOutDate,
   onFilterChange,
+  onChangeCheckIn,
+  onChangeCheckOut,
   onToggleLanguage,
   isUserMenuOpen,
   setIsUserMenuOpen,
@@ -120,6 +294,14 @@ function StayDetailPage({
     }
   }, [paymentMethods, selectedPaymentMethodId, t.profileDashboard.payments.initialValues.selectedMethodId]);
 
+  useEffect(() => {
+    setCheckInDate(parseIsoDate(initialCheckInDate));
+  }, [initialCheckInDate]);
+
+  useEffect(() => {
+    setCheckOutDate(parseIsoDate(initialCheckOutDate));
+  }, [initialCheckOutDate]);
+
   const nextImage = () => {
     setActiveImageIndex((prev) => (prev + 1) % detailImages.length);
   };
@@ -132,6 +314,8 @@ function StayDetailPage({
     const [start, end] = dates;
     setCheckInDate(start);
     setCheckOutDate(end);
+    onChangeCheckIn?.(start ? toIsoDate(start) : "");
+    onChangeCheckOut?.(end ? toIsoDate(end) : "");
 
     if (start) {
       onFilterChange("date", start);
@@ -139,21 +323,38 @@ function StayDetailPage({
   };
 
   const handleCheckInChange = (date) => {
-    if (!date) return;
+    if (!date) {
+      setCheckInDate(null);
+      onChangeCheckIn?.("");
+      return;
+    }
+
+    const nextCheckOutDate = checkOutDate && checkOutDate <= date
+      ? addDays(date, 1)
+      : checkOutDate;
+
     setCheckInDate(date);
-    if (checkOutDate && checkOutDate <= date) {
-      setCheckOutDate(addDays(date, 1));
+    setCheckOutDate(nextCheckOutDate);
+    onChangeCheckIn?.(toIsoDate(date));
+    if (nextCheckOutDate) {
+      onChangeCheckOut?.(toIsoDate(nextCheckOutDate));
     }
     onFilterChange("date", date);
   };
 
   const handleCheckOutChange = (date) => {
-    if (!date) return;
-    if (checkInDate && date <= checkInDate) {
-      setCheckOutDate(addDays(checkInDate, 1));
+    if (!date) {
+      setCheckOutDate(null);
+      onChangeCheckOut?.("");
       return;
     }
-    setCheckOutDate(date);
+
+    const nextCheckOutDate = checkInDate && date <= checkInDate
+      ? addDays(checkInDate, 1)
+      : date;
+
+    setCheckOutDate(nextCheckOutDate);
+    onChangeCheckOut?.(toIsoDate(nextCheckOutDate));
   };
 
   const handleReserveClick = () => {
@@ -540,29 +741,13 @@ function StayDetailPage({
             <div className="detailBookingCard">
               <p className="detailPrice">{formatPrice(listing.price)}</p>
               <div className="detailBookingDates">
-                <DatePicker
-                  selected={checkInDate}
-                  onChange={handleCheckInChange}
-                  locale={language === "es" ? "es" : "en"}
-                  dateFormat="dd/MM/yyyy"
-                  className="catalogDatePicker"
-                  selectsStart
+                <DetailDateRangeField
+                  language={language}
                   startDate={checkInDate}
                   endDate={checkOutDate}
-                  placeholderText={t.catalog.placeholders.date}
                   minDate={new Date()}
-                />
-                <DatePicker
-                  selected={checkOutDate}
-                  onChange={handleCheckOutChange}
-                  locale={language === "es" ? "es" : "en"}
-                  dateFormat="dd/MM/yyyy"
-                  className="catalogDatePicker"
-                  selectsEnd
-                  startDate={checkInDate}
-                  endDate={checkOutDate}
-                  placeholderText={t.catalog.placeholders.date}
-                  minDate={checkInDate || new Date()}
+                  onChangeCheckIn={handleCheckInChange}
+                  onChangeCheckOut={handleCheckOutChange}
                 />
               </div>
               <button

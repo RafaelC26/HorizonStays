@@ -1,5 +1,188 @@
 import DatePicker from "react-datepicker";
-import { useEffect, useRef, useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+const isoToDate = (isoValue) => {
+  if (!isoValue) {
+    return null;
+  }
+
+  const [year, month, day] = isoValue.split("-").map(Number);
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+};
+
+const dateToIso = (date) => {
+  if (!date) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+function CatalogRangeField({
+  language,
+  startValue,
+  endValue,
+  placeholder,
+  className,
+  minDateValue,
+  onChangeCheckIn,
+  onChangeCheckOut
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [hoverDate, setHoverDate] = useState(null);
+
+  const startDate = useMemo(() => isoToDate(startValue), [startValue]);
+  const endDate = useMemo(() => isoToDate(endValue), [endValue]);
+  const minDate = useMemo(() => isoToDate(minDateValue), [minDateValue]);
+
+  const monthNames = language === "es"
+    ? ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  const yearOptions = useMemo(() => {
+    const baseYear = new Date().getFullYear();
+    return Array.from({ length: 9 }, (_, index) => baseYear - 2 + index);
+  }, []);
+
+  const getRangeBounds = (rangeStart, rangeEnd) => {
+    if (!rangeStart || !rangeEnd) {
+      return null;
+    }
+
+    return rangeStart <= rangeEnd
+      ? { rangeMin: rangeStart, rangeMax: rangeEnd }
+      : { rangeMin: rangeEnd, rangeMax: rangeStart };
+  };
+
+  const formatRangeLabel = () => {
+    if (!startDate && !endDate) {
+      return placeholder;
+    }
+
+    const formatter = new Intl.DateTimeFormat(language === "es" ? "es-ES" : "en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    if (startDate && endDate) {
+      return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
+    }
+
+    return formatter.format(startDate || endDate);
+  };
+
+  return (
+    <DatePicker
+      selected={startDate}
+      onChange={(dates) => {
+        const [nextStart, nextEnd] = dates;
+        onChangeCheckIn(nextStart ? dateToIso(nextStart) : "");
+        onChangeCheckOut(nextEnd ? dateToIso(nextEnd) : "");
+
+        if (nextStart && nextEnd) {
+          setHoverDate(null);
+          setIsOpen(false);
+        }
+      }}
+      startDate={startDate}
+      endDate={endDate}
+      selectsRange
+      minDate={minDate}
+      shouldCloseOnSelect={false}
+      open={isOpen}
+      onInputClick={() => setIsOpen(true)}
+      onClickOutside={() => {
+        setHoverDate(null);
+        setIsOpen(false);
+      }}
+      onCalendarClose={() => setHoverDate(null)}
+      onDayMouseEnter={(date) => {
+        if (startDate && !endDate) {
+          setHoverDate(date);
+        }
+      }}
+      popperPlacement="bottom-start"
+      popperClassName="heroDatePickerPopper"
+      calendarClassName="heroDatePickerCalendar"
+      formatWeekDay={(weekday) => weekday.slice(0, 1).toUpperCase()}
+      customInput={(
+        <button type="button" className={className}>
+          {formatRangeLabel()}
+        </button>
+      )}
+      dayClassName={(date) => {
+        const committedBounds = getRangeBounds(startDate, endDate);
+        const previewBounds = !endDate ? getRangeBounds(startDate, hoverDate) : null;
+        const activeBounds = committedBounds || previewBounds;
+        const isInRange = Boolean(activeBounds && date >= activeBounds.rangeMin && date <= activeBounds.rangeMax);
+        const isPreview = Boolean(!committedBounds && previewBounds);
+
+        if (!isInRange) {
+          return undefined;
+        }
+
+        if (activeBounds && date.getTime() === activeBounds.rangeMin.getTime()) {
+          return `${isPreview ? "heroDayPreview" : "heroDayInRange"} heroDayRangeStart`;
+        }
+
+        if (activeBounds && date.getTime() === activeBounds.rangeMax.getTime()) {
+          return `${isPreview ? "heroDayPreview" : "heroDayInRange"} heroDayRangeEnd`;
+        }
+
+        return isPreview ? "heroDayPreview" : "heroDayInRange";
+      }}
+      renderDayContents={(dayOfMonth, date) => {
+        const committedBounds = getRangeBounds(startDate, endDate);
+        const previewBounds = !endDate ? getRangeBounds(startDate, hoverDate) : null;
+        const activeBounds = committedBounds || previewBounds;
+        const isInRange = Boolean(activeBounds && date >= activeBounds.rangeMin && date <= activeBounds.rangeMax);
+        const rangeStep = isInRange
+          ? Math.max(0, Math.min(20, differenceInCalendarDays(date, activeBounds.rangeMin)))
+          : 0;
+
+        return (
+          <span
+            className={`heroDayBubble ${isInRange ? "inRange" : ""}`.trim()}
+            style={isInRange ? { "--hero-range-step": rangeStep } : undefined}
+          >
+            {dayOfMonth}
+          </span>
+        );
+      }}
+      renderCustomHeader={({ date, changeMonth, changeYear }) => (
+        <div className="heroCalendarHeaderControls">
+          <select
+            className="heroCalendarSelect"
+            value={date.getMonth()}
+            onChange={(event) => changeMonth(Number(event.target.value))}
+          >
+            {monthNames.map((monthName, index) => (
+              <option key={monthName} value={index}>{monthName}</option>
+            ))}
+          </select>
+          <select
+            className="heroCalendarSelect"
+            value={date.getFullYear()}
+            onChange={(event) => changeYear(Number(event.target.value))}
+          >
+            {yearOptions.map((year) => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+      )}
+    />
+  );
+}
 
 function CatalogOverlay({
   t,
@@ -9,6 +192,11 @@ function CatalogOverlay({
   catalogFilters,
   catalogListings,
   onFilterChange,
+  checkInDate,
+  checkOutDate,
+  minCheckIn,
+  onChangeCheckIn,
+  onChangeCheckOut,
   onCatalogFilterChange,
   onToggleService,
   onSearch,
@@ -90,14 +278,15 @@ function CatalogOverlay({
                 <rect x="3" y="4" width="18" height="18" rx="2" stroke="#10b981" strokeWidth="2"/>
                 <path d="M16 2V6M8 2V6M3 10H21" stroke="#10b981" strokeWidth="2" strokeLinecap="round"/>
               </svg>
-              <DatePicker
-                selected={heroFilters.date}
-                onChange={(date) => onFilterChange("date", date)}
-                locale={language === "es" ? "es" : "en"}
-                dateFormat="dd/MM/yyyy"
-                placeholderText={datePlaceholder}
-                className="catalogSearchDatePicker"
-                minDate={new Date()}
+              <CatalogRangeField
+                language={language}
+                startValue={checkInDate}
+                endValue={checkOutDate}
+                placeholder={datePlaceholder}
+                className="catalogRangeTrigger catalogSearchDatePicker"
+                minDateValue={minCheckIn}
+                onChangeCheckIn={onChangeCheckIn}
+                onChangeCheckOut={onChangeCheckOut}
               />
             </div>
           </div>
@@ -197,14 +386,15 @@ function CatalogOverlay({
 
             <div className="catalogFilterBlock">
               <h4>{t.catalog.filters.date}</h4>
-              <DatePicker
-                selected={heroFilters.date}
-                onChange={(date) => onFilterChange("date", date)}
-                locale={language === "es" ? "es" : "en"}
-                dateFormat="dd/MM/yyyy"
-                placeholderText={datePlaceholder}
-                className="catalogDatePicker"
-                minDate={new Date()}
+              <CatalogRangeField
+                language={language}
+                startValue={checkInDate}
+                endValue={checkOutDate}
+                placeholder={datePlaceholder}
+                className="catalogRangeTrigger catalogDatePicker"
+                minDateValue={minCheckIn}
+                onChangeCheckIn={onChangeCheckIn}
+                onChangeCheckOut={onChangeCheckOut}
               />
             </div>
 
@@ -257,24 +447,6 @@ function CatalogOverlay({
               </div>
             </div>
 
-            <div className="catalogFilterBlock">
-              <h4>{t.catalog.filters.services}</h4>
-              <ul className="catalogServices">
-                {t.catalog.filters.serviceOptions.map((service) => (
-                  <li key={service.key}>
-                    <label className="catalogServiceOption">
-                      <input
-                        type="checkbox"
-                        checked={catalogFilters.services.includes(service.key)}
-                        onChange={() => onToggleService(service.key)}
-                      />
-                      <span className="catalogServiceCheck" aria-hidden="true" />
-                      <span>{service.label}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </aside>
 
           <div className="catalogGrid">

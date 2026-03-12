@@ -1,46 +1,328 @@
-import { useRef } from "react";
+import DatePicker from "react-datepicker";
+import { differenceInCalendarDays } from "date-fns";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-function HeroSection({
-  t,
+const isoToDate = (isoValue) => {
+  if (!isoValue) {
+    return null;
+  }
+
+  const [year, month, day] = isoValue.split("-").map(Number);
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+};
+
+const dateToIso = (date) => {
+  if (!date) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+function HeroDateField({
+  id,
+  label,
+  icon,
+  value,
+  minValue,
+  onApplyDate,
+  placeholder,
   language,
-  checkInDate,
-  checkOutDate,
-  minCheckIn,
-  minCheckOut,
-  availabilityResult,
-  onChangeCheckIn,
-  onChangeCheckOut,
-  onCheckAvailability
+  rangeStart,
+  rangeEnd
 }) {
-  const checkInInputRef = useRef(null);
-  const checkOutInputRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [hoverDate, setHoverDate] = useState(null);
 
-  const formatDisplayDate = (value) => {
-    if (!value) {
+  const selectedDate = useMemo(() => isoToDate(value), [value]);
+  const minDate = useMemo(() => isoToDate(minValue), [minValue]);
+  const rangeStartDate = useMemo(() => isoToDate(rangeStart), [rangeStart]);
+  const rangeEndDate = useMemo(() => isoToDate(rangeEnd), [rangeEnd]);
+
+  const monthNames = language === "es"
+    ? ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  const yearOptions = useMemo(() => {
+    const baseYear = new Date().getFullYear();
+    return Array.from({ length: 9 }, (_, index) => baseYear - 2 + index);
+  }, []);
+
+  const formatDisplayDate = (rawDate) => {
+    if (!rawDate) {
       return null;
     }
 
-    return new Date(`${value}T00:00:00`).toLocaleDateString(language === "es" ? "es-ES" : "en-US", {
+    return rawDate.toLocaleDateString(language === "es" ? "es-ES" : "en-US", {
       day: "2-digit",
       month: "short",
       year: "numeric"
     });
   };
 
-  const openDatePicker = (inputRef) => {
-    const input = inputRef.current;
+  const handleOpen = () => {
+    setHoverDate(null);
+    setIsOpen(true);
+  };
 
-    if (!input) {
-      return;
+  const getRangeBounds = (startDate, endDate) => {
+    if (!startDate || !endDate) {
+      return null;
     }
 
-    if (typeof input.showPicker === "function") {
-      input.showPicker();
-      return;
+    return startDate <= endDate
+      ? { rangeMin: startDate, rangeMax: endDate }
+      : { rangeMin: endDate, rangeMax: startDate };
+  };
+
+  return (
+    <div className="searchInputWrapper heroDateField">
+      <label htmlFor={id} className="searchFieldLabel">
+        {icon}
+        <span>{label}</span>
+      </label>
+      <DatePicker
+        id={id}
+        selected={selectedDate}
+        onChange={(date) => {
+          if (!date) {
+            return;
+          }
+
+          setHoverDate(null);
+          onApplyDate(dateToIso(date));
+          setIsOpen(false);
+        }}
+        minDate={minDate}
+        shouldCloseOnSelect
+        open={isOpen}
+        onClickOutside={() => {
+          setHoverDate(null);
+          setIsOpen(false);
+        }}
+        onInputClick={handleOpen}
+        onCalendarClose={() => setHoverDate(null)}
+        onDayMouseEnter={(date) => {
+          if (rangeStartDate && !rangeEndDate) {
+            setHoverDate(date);
+          }
+        }}
+        popperPlacement="bottom-start"
+        popperClassName="heroDatePickerPopper"
+        calendarClassName="heroDatePickerCalendar"
+        formatWeekDay={(weekday) => weekday.slice(0, 1).toUpperCase()}
+        customInput={(
+          <button
+            className="calendarTrigger"
+            type="button"
+            aria-label={label}
+            onClick={handleOpen}
+          >
+            {formatDisplayDate(selectedDate) || placeholder}
+          </button>
+        )}
+        dayClassName={(date) => {
+          const committedBounds = getRangeBounds(rangeStartDate, rangeEndDate);
+          const previewBounds = !rangeEndDate ? getRangeBounds(rangeStartDate, hoverDate) : null;
+          const activeBounds = committedBounds || previewBounds;
+          const isInRange = Boolean(activeBounds && date >= activeBounds.rangeMin && date <= activeBounds.rangeMax);
+          const isPreview = Boolean(!committedBounds && previewBounds);
+
+          if (!isInRange) {
+            return undefined;
+          }
+
+          if (activeBounds && date.getTime() === activeBounds.rangeMin.getTime()) {
+            return `${isPreview ? "heroDayPreview" : "heroDayInRange"} heroDayRangeStart`;
+          }
+
+          if (activeBounds && date.getTime() === activeBounds.rangeMax.getTime()) {
+            return `${isPreview ? "heroDayPreview" : "heroDayInRange"} heroDayRangeEnd`;
+          }
+
+          return isPreview ? "heroDayPreview" : "heroDayInRange";
+        }}
+        renderDayContents={(dayOfMonth, date) => {
+          const committedBounds = getRangeBounds(rangeStartDate, rangeEndDate);
+          const previewBounds = !rangeEndDate ? getRangeBounds(rangeStartDate, hoverDate) : null;
+          const activeBounds = committedBounds || previewBounds;
+          const isInRange = Boolean(
+            activeBounds
+            && date >= activeBounds.rangeMin
+            && date <= activeBounds.rangeMax
+          );
+          const rangeStep = isInRange
+            ? Math.max(0, Math.min(20, differenceInCalendarDays(date, activeBounds.rangeMin)))
+            : 0;
+
+          return (
+            <span
+              className={`heroDayBubble ${isInRange ? "inRange" : ""}`.trim()}
+              style={isInRange ? { "--hero-range-step": rangeStep } : undefined}
+            >
+              {dayOfMonth}
+            </span>
+          );
+        }}
+        renderCustomHeader={({ date, changeMonth, changeYear }) => (
+          <div className="heroCalendarHeaderControls">
+            <select
+              className="heroCalendarSelect"
+              value={date.getMonth()}
+              onChange={(event) => changeMonth(Number(event.target.value))}
+            >
+              {monthNames.map((monthName, index) => (
+                <option key={monthName} value={index}>{monthName}</option>
+              ))}
+            </select>
+            <select
+              className="heroCalendarSelect"
+              value={date.getFullYear()}
+              onChange={(event) => changeYear(Number(event.target.value))}
+            >
+              {yearOptions.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      />
+    </div>
+  );
+}
+
+function HeroGuestsField({ t, guestsValue, onChangeGuests }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
+  return (
+    <div className="searchInputWrapper heroGuestsField" ref={containerRef}>
+      <label htmlFor="hero-guests-trigger" className="searchFieldLabel">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 11C17.6569 11 19 9.65685 19 8C19 6.34315 17.6569 5 16 5C14.3431 5 13 6.34315 13 8C13 9.65685 14.3431 11 16 11Z" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 11C9.65685 11 11 9.65685 11 8C11 6.34315 9.65685 5 8 5C6.34315 5 5 6.34315 5 8C5 9.65685 6.34315 11 8 11Z" stroke="currentColor" strokeWidth="2"/>
+          <path d="M8 13C5.23858 13 3 15.2386 3 18V19H13V18C13 15.2386 10.7614 13 8 13Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+          <path d="M16 13C15.1074 13 14.2717 13.2404 13.5532 13.6608C14.4558 14.782 15 16.206 15 17.7576V19H21V18C21 15.2386 18.7614 13 16 13Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+        </svg>
+        <span>{t.hero.guestsLabel}</span>
+      </label>
+
+      <button
+        id="hero-guests-trigger"
+        type="button"
+        className={`heroGuestsTrigger ${isOpen ? "open" : ""}`}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        <span>{guestsValue || t.hero.guestsPlaceholder}</span>
+      </button>
+
+      {isOpen && (
+        <div className="heroGuestsMenu" role="listbox" aria-label={t.hero.guestsLabel}>
+          <button
+            type="button"
+            className={`heroGuestsOption ${guestsValue === "" ? "active" : ""}`}
+            role="option"
+            aria-selected={guestsValue === ""}
+            onClick={() => {
+              onChangeGuests?.("");
+              setIsOpen(false);
+            }}
+          >
+            {t.hero.guestsPlaceholder}
+          </button>
+          {Array.from({ length: 10 }, (_, index) => {
+            const value = String(index + 1);
+            return (
+              <button
+                key={value}
+                type="button"
+                className={`heroGuestsOption ${guestsValue === value ? "active" : ""}`}
+                role="option"
+                aria-selected={guestsValue === value}
+                onClick={() => {
+                  onChangeGuests?.(value);
+                  setIsOpen(false);
+                }}
+              >
+                {value}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HeroSection({
+  t,
+  language,
+  locationValue,
+  guestsValue,
+  checkInDate,
+  checkOutDate,
+  minCheckIn,
+  minCheckOut,
+  availabilityResult,
+  onChangeLocation,
+  onChangeGuests,
+  onChangeCheckIn,
+  onChangeCheckOut,
+  onCheckAvailability,
+  onShowListings
+}) {
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (availabilityResult) {
+      setIsAvailabilityModalOpen(true);
+    }
+  }, [availabilityResult]);
+
+  const closeAvailabilityModal = () => {
+    setIsAvailabilityModalOpen(false);
+  };
+
+  const showListings = () => {
+    if (onShowListings) {
+      onShowListings();
+    } else {
+      const target = document.querySelector("#listings");
+      if (target) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        target.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "start"
+        });
+      }
     }
 
-    input.focus();
-    input.click();
+    setIsAvailabilityModalOpen(false);
   };
 
   return (
@@ -59,25 +341,19 @@ function HeroSection({
         >
           <div className="searchField">
             <div className="searchInputWrapper">
-              <label htmlFor="hero-check-in">{t.hero.checkInLabel}</label>
-              <button
-                className="calendarTrigger"
-                type="button"
-                aria-label={t.hero.checkInLabel}
-                onClick={() => openDatePicker(checkInInputRef)}
-              >
-                {formatDisplayDate(checkInDate) || t.hero.selectCheckInBtn}
-              </button>
+              <label htmlFor="hero-location" className="searchFieldLabel">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor"/>
+                </svg>
+                <span>{t.hero.location}</span>
+              </label>
               <input
-                ref={checkInInputRef}
-                id="hero-check-in"
-                className="heroDatePickerInput"
-                type="date"
-                min={minCheckIn}
-                value={checkInDate}
-                onChange={(event) => onChangeCheckIn(event.target.value)}
-                onKeyDown={(event) => event.preventDefault()}
-                required
+                id="hero-location"
+                className="heroLocationInput"
+                type="text"
+                value={locationValue}
+                onChange={(event) => onChangeLocation?.(event.target.value)}
+                placeholder={t.hero.locationPlaceholder}
               />
             </div>
           </div>
@@ -85,28 +361,51 @@ function HeroSection({
           <div className="searchDivider" />
 
           <div className="searchField">
-            <div className="searchInputWrapper">
-              <label htmlFor="hero-check-out">{t.hero.checkOutLabel}</label>
-              <button
-                className="calendarTrigger"
-                type="button"
-                aria-label={t.hero.checkOutLabel}
-                onClick={() => openDatePicker(checkOutInputRef)}
-              >
-                {formatDisplayDate(checkOutDate) || t.hero.selectCheckOutBtn}
-              </button>
-              <input
-                ref={checkOutInputRef}
-                id="hero-check-out"
-                className="heroDatePickerInput"
-                type="date"
-                min={minCheckOut}
-                value={checkOutDate}
-                onChange={(event) => onChangeCheckOut(event.target.value)}
-                onKeyDown={(event) => event.preventDefault()}
-                required
-              />
-            </div>
+            <HeroDateField
+              id="hero-check-in"
+              label={t.hero.checkInLabel}
+              icon={(
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              )}
+              value={checkInDate}
+              minValue={minCheckIn}
+              onApplyDate={onChangeCheckIn}
+              placeholder={t.hero.selectCheckInBtn}
+              language={language}
+              rangeStart={checkInDate}
+              rangeEnd={checkOutDate}
+            />
+          </div>
+
+          <div className="searchDivider" />
+
+          <div className="searchField">
+            <HeroDateField
+              id="hero-check-out"
+              label={t.hero.checkOutLabel}
+              icon={(
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              )}
+              value={checkOutDate}
+              minValue={minCheckOut}
+              onApplyDate={onChangeCheckOut}
+              placeholder={t.hero.selectCheckOutBtn}
+              language={language}
+              rangeStart={checkInDate}
+              rangeEnd={checkOutDate}
+            />
+          </div>
+
+          <div className="searchDivider" />
+
+          <div className="searchField">
+            <HeroGuestsField t={t} guestsValue={guestsValue} onChangeGuests={onChangeGuests} />
           </div>
 
           <button className="searchButton" type="submit" aria-label={t.hero.checkAvailabilityBtn}>
@@ -117,13 +416,55 @@ function HeroSection({
           </button>
         </form>
 
-        {availabilityResult && (
-          <div className={`availabilityResult ${availabilityResult.isAvailable ? "available" : "unavailable"}`}>
-            <strong>{availabilityResult.title}</strong>
-            <p>{availabilityResult.message}</p>
-            {!!availabilityResult.listingNames?.length && (
-              <p className="availabilityListings">{availabilityResult.listingNames.join(" | ")}</p>
-            )}
+        {availabilityResult && isAvailabilityModalOpen && (
+          <div
+            className="availabilityModalBackdrop"
+            role="dialog"
+            aria-modal="true"
+            aria-label={availabilityResult.title}
+            onClick={closeAvailabilityModal}
+          >
+            <div
+              className={`availabilityModalCard ${availabilityResult.isAvailable ? "available" : "unavailable"}`}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="availabilityModalGlow" aria-hidden="true" />
+              <button
+                type="button"
+                className="availabilityModalClose"
+                aria-label={t.hero.closeAvailabilityModal || "Close"}
+                onClick={closeAvailabilityModal}
+              >
+                ×
+              </button>
+              <p className="availabilityModalState">
+                <span className="availabilityModalStateDot" aria-hidden="true" />
+                {availabilityResult.isAvailable ? "Disponibilidad" : "Resultado"}
+              </p>
+              <div className="availabilityModalLayout">
+                <div className="availabilityModalMain">
+                  <strong>{availabilityResult.title}</strong>
+                  <p>{availabilityResult.message}</p>
+
+                  {availabilityResult.isAvailable && (
+                    <button type="button" className="availabilityShowBtn" onClick={showListings}>
+                      {t.hero.showListingsBtn || "Mostrar alojamientos"}
+                    </button>
+                  )}
+                </div>
+
+                {!!availabilityResult.listingNames?.length && (
+                  <div className="availabilityListingsWrap">
+                    <p className="availabilityListingsLabel">Alojamientos recomendados</p>
+                    <div className="availabilityListingsChips">
+                      {availabilityResult.listingNames.map((listingName) => (
+                        <span key={listingName} className="availabilityListingChip">{listingName}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>

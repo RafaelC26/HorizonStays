@@ -460,7 +460,7 @@
 /* Search Bar */
 .searchBar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.05fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 0.9fr) auto;
   align-items: stretch;
   background: rgba(20, 20, 20, 0.8);
   backdrop-filter: blur(20px);
@@ -468,8 +468,8 @@
   padding: 7px;
   gap: 0;
   border: 1px solid rgba(255,255,255,0.1);
-  max-width: 760px;
-  width: min(760px, 100%);
+  max-width: 1240px;
+  width: min(1240px, 100%);
   margin: 0 auto;
 }
 
@@ -509,9 +509,22 @@
 
 .searchInputWrapper label {
   font-size: 11px;
-  color: rgba(255,255,255,0.5);
+  color: #10b981;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.searchFieldLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.searchFieldLabel svg {
+  width: 13px;
+  height: 13px;
+  color: #10b981;
+  flex-shrink: 0;
 }
 
 .calendarTrigger {
@@ -537,6 +550,114 @@
 .calendarTrigger:focus-visible {
   color: #ffffff;
   transform: translateY(-1px);
+}
+
+.heroLocationInput {
+  width: 100%;
+  min-height: 34px;
+  margin-top: 2px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  outline: none;
+}
+
+.heroLocationInput::placeholder {
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 500;
+}
+
+.heroGuestsField {
+  overflow: visible;
+}
+
+.heroGuestsTrigger {
+  width: 100%;
+  min-height: 34px;
+  margin-top: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0 38px 0 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    linear-gradient(45deg, transparent 50%, rgba(16, 185, 129, 0.9) 50%),
+    linear-gradient(135deg, rgba(16, 185, 129, 0.9) 50%, transparent 50%);
+  background-position:
+    0 0,
+    calc(100% - 18px) calc(50% - 1px),
+    calc(100% - 13px) calc(50% - 1px);
+  background-size:
+    100% 100%,
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+}
+
+.heroGuestsTrigger:hover {
+  border-color: rgba(16, 185, 129, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+.heroGuestsTrigger:focus-visible,
+.heroGuestsTrigger.open {
+  border-color: rgba(16, 185, 129, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 3px rgba(16, 185, 129, 0.14);
+}
+
+.heroGuestsMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  z-index: 2600;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: linear-gradient(180deg, rgba(10, 15, 22, 0.98), rgba(7, 11, 17, 0.98));
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(12px);
+}
+
+.heroGuestsOption {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: transparent;
+  color: rgba(233, 240, 250, 0.92);
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.heroGuestsOption:hover {
+  background: rgba(16, 185, 129, 0.14);
+  color: #ffffff;
+}
+
+.heroGuestsOption.active {
+  background: rgba(16, 185, 129, 0.2);
+  color: #dcfff1;
 }
 
 .heroDatePickerInput {
@@ -579,42 +700,210 @@
   height: 20px;
 }
 
-.availabilityResult {
-  margin: 16px auto 0;
-  max-width: 600px;
-  border-radius: 14px;
-  padding: 12px 14px;
-  text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(9, 12, 18, 0.72);
+.availabilityModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2450;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 20%, rgba(13, 28, 48, 0.32), rgba(3, 8, 14, 0.62));
+  backdrop-filter: blur(7px);
+  padding: 20px;
 }
 
-.availabilityResult strong {
+.availabilityModalCard {
+  width: min(860px, 100%);
+  border-radius: 24px;
+  padding: 28px 28px 24px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(154deg, rgba(11, 18, 28, 0.98), rgba(7, 12, 20, 0.97));
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
+  position: relative;
+  animation: availabilityPopIn 260ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  overflow: hidden;
+}
+
+.availabilityModalGlow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  right: -120px;
+  top: -180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 187, 255, 0.35), rgba(99, 187, 255, 0));
+  pointer-events: none;
+}
+
+.availabilityModalCard strong {
   display: block;
   margin-bottom: 6px;
-  font-size: 14px;
+  font-size: clamp(24px, 3.2vw, 30px);
+  line-height: 1.18;
 }
 
-.availabilityResult p {
+.availabilityModalCard p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(230, 237, 246, 0.86);
+  line-height: 1.5;
 }
 
-.availabilityResult.available {
-  border-color: rgba(16, 185, 129, 0.56);
-  background: rgba(16, 185, 129, 0.17);
+.availabilityModalLayout {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  gap: 18px;
+  align-items: start;
 }
 
-.availabilityResult.unavailable {
-  border-color: rgba(248, 113, 113, 0.56);
-  background: rgba(220, 38, 38, 0.17);
+.availabilityModalMain {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.availabilityListings {
-  margin-top: 6px;
+.availabilityModalState {
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
   font-size: 12px;
-  color: rgba(238, 247, 255, 0.88);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba(230, 245, 255, 0.95);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.availabilityModalStateDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6dd0ff;
+}
+
+.availabilityModalCard.available {
+  border-color: rgba(16, 185, 129, 0.56);
+  background: linear-gradient(160deg, rgba(8, 43, 36, 0.98), rgba(8, 24, 20, 0.96));
+}
+
+.availabilityModalCard.unavailable {
+  border-color: rgba(248, 113, 113, 0.56);
+  background: linear-gradient(160deg, rgba(45, 16, 23, 0.98), rgba(25, 11, 15, 0.96));
+}
+
+.availabilityListingsWrap {
+  margin-top: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.availabilityListingsLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: rgba(219, 233, 249, 0.82);
+  margin-bottom: 10px;
+}
+
+.availabilityListingsChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.availabilityListingChip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 11px;
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(241, 248, 255, 0.95);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.availabilityModalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.availabilityModalClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.availabilityShowBtn {
+  margin-top: 16px;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3a7bff, #2b5fe3);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(45, 106, 255, 0.32);
+  align-self: flex-start;
+}
+
+.availabilityShowBtn:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+@keyframes availabilityPopIn {
+  0% {
+    transform: translateY(12px) scale(0.96);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 860px) {
+  .availabilityModalCard {
+    width: min(620px, 100%);
+    padding: 24px 20px 20px;
+  }
+
+  .availabilityModalLayout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .availabilityModalMain {
+    min-height: auto;
+  }
+
+  .availabilityModalCard p {
+    font-size: 16px;
+  }
+
+  .availabilityShowBtn {
+    width: 100%;
+    align-self: stretch;
+  }
 }
 
 .availabilityDates {
@@ -743,6 +1032,198 @@
 .react-datepicker__day--selected {
   background: #f5a623;
   color: #000000;
+}
+
+.heroDateField {
+  overflow: visible;
+}
+
+.heroDatePickerPopper {
+  z-index: 2600;
+  margin-top: 12px;
+}
+
+.heroDatePickerPopper .react-datepicker__triangle {
+  display: none;
+}
+
+.heroDatePickerCalendar.react-datepicker {
+  border: none;
+  border-radius: 24px;
+  background: #f7f7f8;
+  box-shadow: 0 24px 60px rgba(12, 24, 48, 0.2);
+  overflow: hidden;
+  padding: 0;
+  font-family: "DM Sans", "Segoe UI", sans-serif;
+}
+
+.heroDatePickerCalendar .react-datepicker__month-container {
+  width: 272px;
+}
+
+.heroDatePickerCalendar .react-datepicker__header {
+  background: #f7f7f8;
+  border-bottom: 1px solid #ececf0;
+  padding: 12px 14px 8px;
+}
+
+.heroDatePickerCalendar .react-datepicker__current-month,
+.heroDatePickerCalendar .react-datepicker__navigation {
+  display: none;
+}
+
+.heroCalendarHeaderControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.heroCalendarSelect {
+  width: 100%;
+  border: 1px solid #ececf1;
+  background: #eceef2;
+  color: #1b2231;
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  outline: none;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #59637a 50%),
+    linear-gradient(135deg, #59637a 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 1px),
+    calc(100% - 13px) calc(50% - 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.heroDatePickerCalendar .react-datepicker__day-names {
+  margin-top: 2px;
+}
+
+.heroDatePickerCalendar .react-datepicker__day-name {
+  color: #b3bac7;
+  width: 2.04rem;
+  margin: 0.1rem;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.8rem;
+}
+
+.heroDatePickerCalendar .react-datepicker__month {
+  margin: 0;
+  padding: 10px 14px 12px;
+}
+
+.heroDatePickerCalendar .react-datepicker__week {
+  display: flex;
+  justify-content: space-between;
+}
+
+.heroDatePickerCalendar .react-datepicker__day {
+  width: 2.04rem;
+  height: 2.04rem;
+  line-height: 2.04rem;
+  margin: 0.1rem;
+  border-radius: 999px;
+  background: transparent;
+  color: #1f283b;
+  font-size: 13px;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.heroDatePickerCalendar .react-datepicker__day:hover {
+  background: #eceff6;
+}
+
+.heroDatePickerCalendar .react-datepicker__day--outside-month {
+  color: #c6cbd6;
+}
+
+.heroDatePickerCalendar .react-datepicker__day--disabled {
+  color: #d7dbe5;
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayInRange {
+  color: #ff5d7c;
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayRangeStart,
+.heroDatePickerCalendar .react-datepicker__day.heroDayRangeEnd,
+.heroDatePickerCalendar .react-datepicker__day--selected,
+.heroDatePickerCalendar .react-datepicker__day--keyboard-selected {
+  color: #ffffff;
+}
+
+.heroDayBubble {
+  width: 2.04rem;
+  height: 2.04rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.heroDatePickerCalendar .react-datepicker__day:hover .heroDayBubble {
+  background: #eceff6;
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayInRange .heroDayBubble {
+  background: #ffe8ee;
+  color: #ff5d7c;
+  animation: heroRangePaint 360ms cubic-bezier(0.22, 0.8, 0.3, 1) both;
+  animation-delay: calc(var(--hero-range-step, 0) * 45ms);
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayPreview .heroDayBubble {
+  background: #ffeef4;
+  color: #ff4d72;
+  animation: heroRangePaint 320ms cubic-bezier(0.2, 0.78, 0.25, 1) both;
+  animation-delay: calc(var(--hero-range-step, 0) * 28ms);
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayRangeStart .heroDayBubble,
+.heroDatePickerCalendar .react-datepicker__day.heroDayRangeEnd .heroDayBubble,
+.heroDatePickerCalendar .react-datepicker__day--selected .heroDayBubble,
+.heroDatePickerCalendar .react-datepicker__day--keyboard-selected .heroDayBubble {
+  background: #ff335c;
+  color: #ffffff;
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayPreview.heroDayRangeStart .heroDayBubble,
+.heroDatePickerCalendar .react-datepicker__day.heroDayPreview.heroDayRangeEnd .heroDayBubble {
+  background: #ff4b6f;
+}
+
+.heroDatePickerCalendar .react-datepicker__day.heroDayRangeStart .heroDayBubble,
+.heroDatePickerCalendar .react-datepicker__day.heroDayRangeEnd .heroDayBubble {
+  box-shadow: 0 8px 16px rgba(255, 51, 92, 0.28);
+}
+
+@keyframes heroRangePaint {
+  0% {
+    transform: scale(0.25);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.heroDatePickerCalendar .react-datepicker__day--today {
+  border: 1px solid #d9deea;
 }
 
 /* ===== COLLECTIONS SECTION ===== */
@@ -884,82 +1365,131 @@
 
 /* ===== EXPERIENCES SECTION ===== */
 .experiences {
-  padding: 60px 48px;
-  background: #0d0d0d;
+  padding: 72px 48px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0) 42%),
+    radial-gradient(circle at 8% 70%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 28%),
+    #0d0d0d;
 }
 
-.experiencesGrid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 20px;
-  height: 360px;
+.sellerSpotlight {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
 }
 
-.experienceCard {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  cursor: pointer;
+.sellerAvatarWrap {
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
   border: none;
   padding: 0;
+  cursor: pointer;
   background: transparent;
   appearance: none;
-  width: 100%;
-  text-align: left;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), 0 0 0 10px rgba(16, 185, 129, 0.12);
 }
 
-.experienceCard.featured {
-  grid-row: 1;
-}
-
-.experienceCard img {
+.sellerAvatar {
   width: 100%;
   height: 100%;
+  border-radius: 999px;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  border: 4px solid rgba(255, 255, 255, 0.84);
+  transition: transform 0.35s ease;
 }
 
-.experienceCard:hover img {
-  transform: scale(1.05);
+.sellerAvatarWrap:hover .sellerAvatar {
+  transform: scale(1.04);
 }
 
-.experienceOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
+.sellerIntro {
+  max-width: 700px;
 }
 
-.experienceContent {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  right: 24px;
-}
-
-.experienceTag {
+.sellerTag {
   display: inline-block;
-  background: #10b981;
-  color: #000000;
+  background: rgba(16, 185, 129, 0.22);
+  color: #b9f3dd;
+  border: 1px solid rgba(16, 185, 129, 0.45);
   font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
   margin-bottom: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.experienceContent h3 {
-  font-size: 22px;
-  font-weight: 600;
+.sellerIntro h3 {
   color: #ffffff;
-  margin-bottom: 4px;
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.1;
 }
 
-.experienceCount {
+.sellerRole {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.sellerBio {
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.sellerTrustRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sellerTrustItem {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f6faf8;
+  border-radius: 999px;
+  padding: 9px 14px;
   font-size: 13px;
-  color: rgba(255,255,255,0.6);
+  font-weight: 600;
+}
+
+.sellerDetailsGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.sellerDetailCard {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(3px);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: left;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.sellerDetailCard h4 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sellerDetailCard p {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.74);
 }
 
 /* ===== CATEGORIES PAGE ===== */
@@ -2227,6 +2757,11 @@
   outline: none;
 }
 
+.catalogRangeTrigger {
+  text-align: left;
+  cursor: pointer;
+}
+
 .catalogSearchInput::placeholder,
 .catalogSearchDatePicker::placeholder {
   color: rgba(214, 225, 240, 0.62);
@@ -2373,6 +2908,11 @@
   font-size: 13px;
   color: rgba(220, 230, 240, 0.9);
   outline: none;
+}
+
+.catalogDatePicker.catalogRangeTrigger {
+  text-align: left;
+  cursor: pointer;
 }
 
 .catalogFilterSelect {
@@ -3187,10 +3727,34 @@
 
 .detailBookingDates {
   margin-top: 10px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  display: flex;
 }
+
+.detailDateRangeButton {
+  width: 100%;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.detailDateRangeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.detailDateRangeButton:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #f5a623;
+}
+
 
 .detailAmenitiesCard h3 {
   margin-bottom: 10px;
@@ -3849,19 +4413,19 @@
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .experiencesGrid {
+  .sellerDetailsGrid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    height: auto;
+    gap: 12px;
   }
-  
-  .experienceCard {
-    height: 250px;
+
+  .sellerAvatarWrap {
+    width: 190px;
+    height: 190px;
   }
-  
-  .experienceCard.featured {
-    grid-row: auto;
-    height: 350px;
+
+  .sellerBio {
+    font-size: 15px;
+    line-height: 1.7;
   }
   
   .listingsGrid {

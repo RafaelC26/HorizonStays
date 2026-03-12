@@ -11,10 +11,9 @@ function Navbar({
   onAuthAction
 }) {
   const navSections = [
-    { key: "destinations", href: "#listings", label: t.navbar.destinations },
-    { key: "experiences", href: "#experiences", label: t.navbar.experiences },
-    { key: "journal", href: "#stats", label: t.navbar.journal },
-    { key: "about", href: "#footer", label: t.navbar.about }
+    { key: "homes", href: "#listings", label: t.navbar.homes },
+    { key: "host", href: "#experiences", label: t.navbar.host },
+    { key: "contact", href: "#footer", label: t.navbar.contact }
   ];
 
   const handleNavClick = (event, href) => {

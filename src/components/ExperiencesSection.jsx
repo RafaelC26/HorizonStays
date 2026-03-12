@@ -8,31 +8,61 @@ function ExperiencesSection({ t, onSelectExperienceCategory }) {
         </div>
       </div>
 
-      <div className="experiencesGrid">
+      <div className="sellerSpotlight">
         <button
-          className="experienceCard featured"
+          className="sellerAvatarWrap"
           type="button"
-          onClick={() => onSelectExperienceCategory?.("aframe")}
+          onClick={() => onSelectExperienceCategory?.("seller-profile")}
+          aria-label={t.experiences.profileImageAlt}
         >
-          <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=600&h=800&fit=crop" alt="A-Frame" loading="lazy" decoding="async" />
-          <div className="experienceOverlay" />
-          <div className="experienceContent">
-            <span className="experienceTag">Experiencia</span>
-            <h3>{t.experiences.aframe}</h3>
-            <p className="experienceCount">{t.experiences.aframeCount}</p>
-          </div>
+          <img
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=560&h=560&fit=crop"
+            alt={t.experiences.profileImageAlt}
+            className="sellerAvatar"
+            loading="lazy"
+            decoding="async"
+          />
         </button>
-        <button
-          className="experienceCard small"
-          type="button"
-          onClick={() => onSelectExperienceCategory?.("forest")}
-        >
-          <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&h=300&fit=crop" alt="Forest" loading="lazy" decoding="async" />
-          <div className="experienceOverlay" />
-          <div className="experienceContent">
-            <h3>{t.experiences.forestCabins}</h3>
-          </div>
-        </button>
+
+        <div className="sellerIntro">
+          <span className="sellerTag">{t.experiences.tag}</span>
+          <h3>{t.experiences.name}</h3>
+          <p className="sellerRole">{t.experiences.role}</p>
+          <p className="sellerBio">{t.experiences.bio}</p>
+        </div>
+
+        <div className="sellerTrustRow" role="list">
+          {t.experiences.trustHighlights.map((item) => (
+            <span key={item} className="sellerTrustItem" role="listitem">{item}</span>
+          ))}
+        </div>
+
+        <div className="sellerDetailsGrid">
+          <button
+            className="sellerDetailCard"
+            type="button"
+            onClick={() => onSelectExperienceCategory?.("seller-metrics")}
+          >
+            <h4>{t.experiences.yearsHosting}</h4>
+            <p>{t.experiences.yearsHostingDesc}</p>
+          </button>
+          <button
+            className="sellerDetailCard"
+            type="button"
+            onClick={() => onSelectExperienceCategory?.("seller-response")}
+          >
+            <h4>{t.experiences.responseTime}</h4>
+            <p>{t.experiences.responseTimeDesc}</p>
+          </button>
+          <button
+            className="sellerDetailCard"
+            type="button"
+            onClick={() => onSelectExperienceCategory?.("seller-attention")}
+          >
+            <h4>{t.experiences.personalAttention}</h4>
+            <p>{t.experiences.personalAttentionDesc}</p>
+          </button>
+        </div>
       </div>
     </section>
   );
