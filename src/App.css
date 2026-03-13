@@ -1522,6 +1522,82 @@
   border: 1px solid #d9deea;
 }
 
+/* Main page typography bump */
+.mainPage .navLink {
+  font-size: 15px;
+}
+
+.mainPage .authBtn {
+  font-size: 14px;
+}
+
+.mainPage .bookBtn {
+  font-size: 15px;
+}
+
+.mainPage .heroTitle {
+  font-size: clamp(46px, 6.5vw, 78px);
+}
+
+.mainPage .heroSubtitle {
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.mainPage .searchInputWrapper label {
+  font-size: 12px;
+}
+
+.mainPage .calendarTrigger,
+.mainPage .heroLocationInput,
+.mainPage .heroGuestsTrigger {
+  font-size: 16px;
+}
+
+.mainPage .sectionLabel {
+  font-size: 13px;
+}
+
+.mainPage .sectionTitle {
+  font-size: 32px;
+}
+
+.mainPage .sectionSubtitle {
+  font-size: 19px;
+}
+
+.mainPage .viewAllLink {
+  font-size: 14px;
+}
+
+.mainPage .collectionContent h3 {
+  font-size: 20px;
+}
+
+.mainPage .statValue {
+  font-size: 40px;
+}
+
+.mainPage .statLabel {
+  font-size: 16px;
+}
+
+.mainPage .sellerRole,
+.mainPage .sellerBio {
+  font-size: 17px;
+}
+
+.mainPage .sellerTrustItem {
+  font-size: 14px;
+}
+
+.mainPage .sellerDetailCard h4 {
+  font-size: 17px;
+}
+
+.mainPage .sellerDetailCard p {
+  font-size: 14px;
+}
+
 /* ===== COLLECTIONS SECTION ===== */
 .collections {
   padding: 80px 48px;
@@ -4951,6 +5027,10 @@
 }
 
 @media (max-width: 992px) {
+  .mainPage .heroSubtitle {
+    font-size: clamp(26px, 3.8vw, 36px);
+  }
+
   #hero,
   #listings,
   #stats,
@@ -5215,6 +5295,10 @@
 }
 
 @media (max-width: 768px) {
+  .mainPage .heroSubtitle {
+    font-size: clamp(24px, 5vw, 32px);
+  }
+
   .navbar {
     padding: 14px 14px;
     gap: 8px;
@@ -5463,6 +5547,10 @@
 }
 
 @media (max-width: 480px) {
+  .mainPage .heroSubtitle {
+    font-size: clamp(22px, 6vw, 28px);
+  }
+
   .navbar {
     padding: 12px 10px;
     display: grid;

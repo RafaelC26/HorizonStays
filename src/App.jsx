@@ -523,7 +523,7 @@ function App() {
       <Route
         path="*"
         element={
-    <div className="app">
+    <div className="app mainPage">
       <Navbar
         t={t}
         language={language}
