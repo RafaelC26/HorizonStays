@@ -9,7 +9,7 @@
   min-height: 100vh;
   background-color: #0a0a0a;
   color: #ffffff;
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-main);
 }
 
 .pageLoadingState {
@@ -168,7 +168,7 @@
 }
 
 .threeIntroWordmark h1 {
-  font-family: 'Lobster Two', cursive;
+  font-family: var(--font-heading);
   font-size: clamp(34px, 8vw, 58px);
   line-height: 1;
   letter-spacing: 0.24em;
@@ -178,7 +178,7 @@
 }
 
 .threeIntroWordmark p:last-child {
-  font-family: 'Caveat', cursive;
+  font-family: var(--font-main);
   margin-top: 12px;
   color: rgba(24, 69, 46, 0.66);
   font-size: 18px;
@@ -734,21 +734,31 @@
 }
 
 .heroTitle {
-  font-family: 'Lobster Two', cursive;
-  font-size: clamp(40px, 6vw, 72px);
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  font-family: var(--font-heading, 'Space Grotesk', 'Inter', sans-serif);
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: 24px;
+  background: linear-gradient(160deg, #ffffff 0%, rgba(255,255,255,0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .heroSubtitle {
-  font-family: 'Caveat', cursive;
-  font-size: clamp(17px, 2.2vw, 22px);
-  color: rgba(255,255,255,0.8);
-  max-width: 600px;
-  margin: 0 auto 40px;
-  line-height: 1.6;
+  font-family: var(--font-main, 'Inter', sans-serif);
+  font-size: clamp(16px, 1.8vw, 20px);
+  font-weight: 400;
+  color: rgba(220, 235, 255, 0.68);
+  max-width: 540px;
+  margin: 0 auto 44px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
 }
 
 /* Search Bar */
@@ -1300,7 +1310,7 @@
   background: #1a1a1a;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-main);
 }
 
 .react-datepicker__header {
@@ -1350,7 +1360,7 @@
   box-shadow: 0 24px 60px rgba(12, 24, 48, 0.2);
   overflow: hidden;
   padding: 0;
-  font-family: "DM Sans", "Segoe UI", sans-serif;
+  font-family: var(--font-main);
 }
 
 .heroDatePickerCalendar .react-datepicker__month-container {
@@ -1622,7 +1632,7 @@
 }
 
 .sectionTitle {
-  font-family: 'Caveat', cursive;
+  font-family: var(--font-heading);
   font-size: 28px;
   font-weight: 700;
   color: #ffffff;
@@ -1633,7 +1643,7 @@
 }
 
 .sectionSubtitle {
-  font-family: 'Caveat', cursive;
+  font-family: var(--font-main);
   font-size: 17px;
   color: rgba(255,255,255,0.5);
   margin-top: 4px;
@@ -1727,9 +1737,9 @@
 }
 
 .statValue {
-  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0.04em;
   color: #f5a623;
 }
@@ -2017,13 +2027,1024 @@
 }
 
 /* ===== PROFILE DASHBOARD ===== */
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD — Premium Redesign (Framer / Webflow style)
+   ═══════════════════════════════════════════════════════ */
+
+/* Page shell */
 .profileDashPage {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #edf3fb;
+  background: #060810;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%, rgba(16,185,129,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(99,102,241,0.06) 0%, transparent 55%);
+  color: #e8f0fe;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-main, 'Inter', system-ui, sans-serif);
+}
+
+/* ── Topbar ──────────────────────────────────────────── */
+.profileDashTopbar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  height: 68px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(6,8,16,0.82);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+
+.profileDashBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f0f6ff;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.profileDashBrandMark {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+}
+
+.profileDashNavLinks {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: start;
+}
+
+.profileDashNavLinks a {
+  text-decoration: none;
+  color: rgba(200,218,246,0.62);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: color 0.18s, background 0.18s;
+}
+
+.profileDashNavLinks a:hover {
+  color: #e8f0fe;
+  background: rgba(255,255,255,0.06);
+}
+
+.profileDashTopActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profileDashSearch input {
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.055);
+  color: #eef4fd;
+  border-radius: 999px;
+  padding: 9px 16px 9px 36px;
+  min-width: 230px;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.profileDashSearch input::placeholder { color: rgba(165,190,225,0.45); }
+
+.profileDashSearch input:focus {
+  border-color: rgba(16,185,129,0.5);
+  background: rgba(255,255,255,0.08);
+}
+
+.profileDashBell {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  color: rgba(200,220,250,0.7);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.profileDashBell:hover {
+  background: rgba(16,185,129,0.12);
+  color: #10b981;
+  border-color: rgba(16,185,129,0.3);
+}
+
+.profileDashAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid rgba(16,185,129,0.45);
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+}
+
+/* ── Layout ──────────────────────────────────────────── */
+.profileDashLayout {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 36px 28px 56px;
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: 28px;
+  flex: 1;
+  align-items: start;
+}
+
+/* ── Sidebar ─────────────────────────────────────────── */
+.profileDashSidebar {
+  position: sticky;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profileDashUserBlock {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  margin-bottom: 8px;
+}
+
+.profileDashUserPhoto {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid rgba(16,185,129,0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+.profileDashUserBlock h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f0f6ff;
+}
+
+.profileDashUserBlock span {
+  display: inline-block;
+  margin-top: 5px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.3);
+  color: #4ade80;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Sidebar nav section label */
+.profileDashSidebarLabel {
+  padding: 10px 12px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(160,185,225,0.4);
+}
+
+.profileDashMenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profileDashMenu li {
+  border-radius: 12px;
+  font-size: 14px;
+  color: rgba(190,210,242,0.65);
+  font-weight: 500;
+  transition: background 0.16s;
+}
+
+.profileDashMenuBtn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.16s, color 0.16s;
+}
+
+.profileDashMenuBtn::before {
+  content: '';
+  width: 3px;
+  height: 0;
+  border-radius: 99px;
+  background: #10b981;
+  transition: height 0.2s ease;
+  flex-shrink: 0;
+}
+
+.profileDashMenuBtn:hover {
+  background: rgba(255,255,255,0.055);
+  color: #e8f0fe;
+}
+
+.profileDashMenu li.active .profileDashMenuBtn {
+  background: rgba(16,185,129,0.1);
+  color: #34d399;
+  font-weight: 600;
+}
+
+.profileDashMenu li.active .profileDashMenuBtn::before {
+  height: 18px;
+}
+
+.profileDashReserveBtn {
+  margin-top: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 16px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(16,185,129,0.32);
+  letter-spacing: 0.01em;
+}
+
+.profileDashReserveBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(16,185,129,0.42);
+}
+
+.profileDashReserveBtn:active {
+  transform: translateY(0);
+}
+
+/* ── Main content area ───────────────────────────────── */
+.profileDashMain {
+  min-width: 0;
+}
+
+.profileDashBackRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+/* Section headings */
+.profileDashHeading {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.profileDashHeading h1 {
+  font-family: var(--font-heading, 'Space Grotesk', 'Inter', sans-serif);
+  margin: 0;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(110deg, #f0f6ff 0%, rgba(240,246,255,0.72) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profileDashHeading p {
+  margin-top: 8px;
+  color: rgba(175,200,235,0.58);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* ── Tabs ────────────────────────────────────────────── */
+.profileDashTabs {
+  margin-bottom: 24px;
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.profileDashTabs button {
+  border: none;
+  background: transparent;
+  color: rgba(175,200,240,0.55);
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 9px;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.profileDashTabs button:hover {
+  color: rgba(230,242,255,0.8);
+  background: rgba(255,255,255,0.05);
+}
+
+.profileDashTabs button.active {
+  background: rgba(16,185,129,0.18);
+  color: #4ade80;
+  box-shadow: inset 0 0 0 1px rgba(16,185,129,0.3);
+}
+
+.profileDashTabs button span {
+  margin-left: 7px;
+  border-radius: 999px;
+  background: rgba(16,185,129,0.2);
+  color: #6ee7b7;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+}
+
+/* ── Trip cards ──────────────────────────────────────── */
+.profileDashTripCards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profileDashTripCard {
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.09);
+  overflow: hidden;
+  background: rgba(12,16,26,0.82);
+  display: grid;
+  grid-template-columns: minmax(200px,28%) minmax(0,1fr);
+  height: 196px;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s;
+  cursor: pointer;
+}
+
+.profileDashTripCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.45);
+  border-color: rgba(16,185,129,0.18);
+}
+
+.profileDashTripCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.profileDashTripCard:hover img {
+  transform: scale(1.04);
+}
+
+.profileDashTripInfo {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profileDashTripLocation {
+  margin: 0;
+  text-transform: uppercase;
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.profileDashTripInfo h3 {
+  margin: 8px 0 0;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #f0f6ff;
+}
+
+.profileDashTripMeta {
+  margin-top: 6px;
+  color: rgba(175,200,232,0.6);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profileDashTripMeta::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(52,211,153,0.6);
+}
+
+.profileDashTripActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.profileDashTripActions button {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: #d8e8fb;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+}
+
+.profileDashTripActions button:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+
+.profileDashTripActions button.primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.28);
+}
+
+.profileDashTripActions button.primary:hover {
+  box-shadow: 0 6px 18px rgba(16,185,129,0.4);
+  background: linear-gradient(135deg, #14c58a 0%, #10a87d 100%);
+}
+
+/* ── Personal / Settings cards ───────────────────────── */
+.profileDashPersonalSection,
+.profileDashSecuritySection,
+.profileDashPaymentsSection,
+.profileDashFavoritesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profileDashPersonalCard {
+  padding: 24px 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(12,16,26,0.72);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s;
+}
+
+.profileDashPersonalCard:hover {
+  border-color: rgba(255,255,255,0.13);
+}
+
+.profileDashPersonalCard h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #e8f0fe;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profileDashPersonalCard h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #10b981, #059669);
+  flex-shrink: 0;
+}
+
+.profileDashPersonalCard > p {
+  margin: 10px 0 0;
+  color: rgba(170,195,230,0.55);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Setting rows */
+.profileDashSettingList {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
 }
+
+.profileDashSettingList li {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.15s;
+  border-radius: 0;
+}
+
+.profileDashSettingList li:last-child {
+  border-bottom: none;
+}
+
+.profileDashSettingList li:hover {
+  background: rgba(255,255,255,0.018);
+  margin: 0 -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.profileDashSettingList span {
+  color: rgba(155,182,220,0.6);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.profileDashSettingList strong {
+  font-size: 14px;
+  color: #e8f0fe;
+  font-weight: 500;
+}
+
+.profileDashSettingList input,
+.profileDashSettingList select {
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(255,255,255,0.06);
+  color: #ecf3fc;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.profileDashSettingList input:focus,
+.profileDashSettingList select:focus {
+  border-color: rgba(16,185,129,0.7);
+  background: rgba(16,185,129,0.06);
+}
+
+.profileDashSettingList .chevron {
+  font-size: 20px;
+  color: rgba(160,186,225,0.35);
+  text-transform: none;
+  font-style: normal;
+}
+
+/* Inline fields (name editing) */
+.profileDashInlineFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 440px;
+}
+
+/* Personal header with buttons */
+.profileDashPersonalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.profileDashPersonalActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Buttons — secondary + primary */
+.profileDashSecondaryBtn,
+.profileDashPrimaryBtn {
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s, background 0.2s;
+}
+
+.profileDashSecondaryBtn {
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.05);
+  color: #cee0f8;
+}
+
+.profileDashSecondaryBtn:hover {
+  border-color: rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.09);
+  transform: translateY(-1px);
+}
+
+.profileDashPrimaryBtn {
+  border: none;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(16,185,129,0.28);
+}
+
+.profileDashPrimaryBtn:hover {
+  box-shadow: 0 10px 24px rgba(16,185,129,0.4);
+  transform: translateY(-1px);
+}
+
+.profileDashPrimaryBtn:active,
+.profileDashSecondaryBtn:active {
+  transform: translateY(0);
+}
+
+/* ── Toggle switch ───────────────────────────────────── */
+.profileDashToggleRow {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.profileDashToggleRow > span {
+  font-size: 14px;
+  color: rgba(190,212,242,0.8);
+  font-weight: 500;
+}
+
+.profileDashSwitch {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.07);
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.profileDashSwitch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(180,210,255,0.7);
+  transition: transform 0.25s ease, background 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.profileDashSwitch.on {
+  background: linear-gradient(135deg, rgba(16,185,129,0.75), rgba(5,150,105,0.75));
+  border-color: rgba(16,185,129,0.5);
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.14);
+}
+
+.profileDashSwitch.on span {
+  transform: translateX(22px);
+  background: #fff;
+}
+
+.profileDashSecurityInfo {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 10px;
+  color: rgba(103,227,180,0.94);
+  font-size: 13px;
+}
+
+.profileDashSecurityActionRow {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Tiny buttons (payment methods, invoices) */
+.profileDashTinyBtn {
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: #cce0f8;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+  white-space: nowrap;
+}
+
+.profileDashTinyBtn:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.24);
+  transform: translateY(-1px);
+}
+
+.profileDashTinyBtn.active {
+  border-color: rgba(16,185,129,0.7);
+  background: rgba(16,185,129,0.14);
+  color: #6ee7b7;
+}
+
+/* ── Favorites ───────────────────────────────────────── */
+.profileDashFavoritesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.profileDashFavoriteCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(12,16,26,0.8);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s;
+}
+
+.profileDashFavoriteCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.45);
+  border-color: rgba(16,185,129,0.2);
+}
+
+.profileDashFavoriteCard img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.profileDashFavoriteCard:hover img {
+  transform: scale(1.04);
+}
+
+.profileDashFavoriteHeart {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.profileDashFavoriteHeart:hover {
+  background: rgba(239,68,68,0.18);
+  transform: scale(1.1);
+}
+
+.profileDashFavoriteContent {
+  padding: 14px 16px 16px;
+}
+
+.profileDashFavoriteContent h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f0f6ff;
+}
+
+.profileDashFavoriteContent p {
+  margin-top: 5px;
+  font-size: 13px;
+  color: rgba(175,200,235,0.6);
+}
+
+.profileDashFavoriteActions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Recommended section ─────────────────────────────── */
+.profileDashRecommended {
+  margin-top: 40px;
+}
+
+.profileDashRecommendedHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.profileDashRecommendedHeader h2 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #f0f6ff;
+}
+
+.profileDashRecommendedHeader a {
+  color: #34d399;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.profileDashRecommendedHeader a:hover {
+  color: #6ee7b7;
+}
+
+.profileDashRecommendedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profileDashRecoCard {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(12,16,26,0.82);
+  cursor: pointer;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s;
+  display: flex;
+  flex-direction: column;
+}
+
+.profileDashRecoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.45);
+  border-color: rgba(16,185,129,0.15);
+}
+
+.profileDashRecoCard img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.profileDashRecoCard:hover img {
+  transform: scale(1.04);
+}
+
+.profileDashRecoCard > div {
+  padding: 14px 16px 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.profileDashRecoCountry {
+  text-transform: uppercase;
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.profileDashRecoCard h3 {
+  margin: 7px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f0f6ff;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.profileDashRecoPrice {
+  margin-top: 10px;
+  color: rgba(175,200,235,0.65);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ── Footer ──────────────────────────────────────────── */
+.profileDashFooter {
+  margin-top: auto;
+  padding: 18px 32px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  color: rgba(165,190,225,0.5);
+  font-size: 13px;
+  background: rgba(6,8,16,0.6);
+  backdrop-filter: blur(10px);
+}
+
+.profileDashFooterBrand {
+  font-weight: 700;
+  color: rgba(165,190,225,0.65);
+}
+
+.profileDashFooterLinks {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  justify-self: center;
+}
+
+.profileDashFooterLinks a {
+  color: rgba(165,190,225,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.profileDashFooterLinks a:hover {
+  color: rgba(220,240,255,0.8);
+}
+
+.profileDashFooterCredit {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.profileDashFooterCreditLink {
+  color: rgba(52,211,153,0.8);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.profileDashFooterCreditLink:hover {
+  color: #34d399;
+}
+
 
 .profileDashTopbar {
   height: 74px;
@@ -2208,7 +3229,7 @@
 }
 
 .profileDashHeading h1 {
-  font-family: 'Caveat', cursive;
+  font-family: var(--font-heading);
   margin: 0;
   font-size: 28px;
 }
@@ -4552,15 +5573,7 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-.detailContactBtn {
-  border: none;
-  border-radius: 24px;
-  background: #0fb77f;
-  color: #052014;
-  font-weight: 700;
-  padding: 12px 18px;
-  cursor: pointer;
-}
+/* detailContactBtn → see WhatsApp button section at bottom */
 
 .hostChatLauncherPanel {
   position: fixed;
@@ -5714,4 +6727,331 @@
   .hostDashKpiGrid {
     grid-template-columns: 1fr;
   }
+}
+
+/* WhatsApp Reservation Modal */
+.wa-reservation-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.wa-reservation-modal {
+  background: white;
+  color: #1a1a1a;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: waModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes waModalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.wa-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #f1f1f1;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.wa-close-btn:hover {
+  background: #e5e5e5;
+  color: #000;
+}
+
+.wa-modal-header {
+  padding: 32px 32px 0;
+  text-align: left;
+}
+
+.wa-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.wa-modal-header h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #111;
+}
+
+.wa-modal-header p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.wa-reservation-form {
+  padding: 24px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wa-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wa-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.wa-form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  margin-left: 4px;
+}
+
+.wa-form-group input,
+.wa-form-group select,
+.wa-form-group textarea {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.wa-form-group input:focus,
+.wa-form-group select:focus,
+.wa-form-group textarea:focus {
+  outline: none;
+  border-color: #25D366;
+  box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.1);
+}
+
+.wa-summary-box {
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.wa-summary-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.wa-summary-item strong {
+  color: #111;
+}
+
+.wa-submit-btn {
+  background: #25D366;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.wa-submit-btn:hover {
+  background: #128C7E;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(37, 211, 102, 0.3);
+}
+
+/* ── Real Map Embed ─────────────────────────────────── */
+.detailMapEmbed {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.detailMapEmbed iframe {
+  display: block;
+  border-radius: 14px 14px 0 0;
+}
+
+.detailMapEmbedLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0fb77f;
+  text-decoration: none;
+  background: rgba(15, 183, 127, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background 0.2s, color 0.2s;
+}
+
+.detailMapEmbedLink:hover {
+  background: rgba(15, 183, 127, 0.14);
+  color: #13d991;
+}
+
+/* Tab Location Panel — now uses real map link */
+.detailMapPreviewLink {
+  display: block;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+
+.detailMapPreviewLink:hover {
+  opacity: 0.88;
+}
+
+.detailLocationTextLink {
+  display: block;
+  padding: 10px 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0fb77f;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.detailLocationTextLink:hover {
+  color: #13d991;
+}
+
+/* ── Hero Location Suggestions Dropdown ─────────────── */
+.heroLocationField {
+  position: relative;
+}
+
+.heroLocationMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: -14px;
+  right: -14px;
+  background: rgba(12, 16, 26, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  z-index: 900;
+  overflow: hidden;
+  max-height: 240px;
+  overflow-y: auto;
+  animation: heroMenuFadeIn 0.15s ease;
+}
+
+@keyframes heroMenuFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.heroLocationOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 18px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  font-family: var(--font-main, 'Inter', sans-serif);
+  font-weight: 400;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+
+.heroLocationOption::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(15, 183, 127, 0.6);
+  flex-shrink: 0;
+  margin-right: 2px;
+  transition: background 0.15s;
+}
+
+.heroLocationOption:hover::before,
+.heroLocationOption:focus::before {
+  background: #0fb77f;
+}
+
+.heroLocationOption:hover,
+.heroLocationOption:focus {
+  background: rgba(15, 183, 127, 0.12);
+  color: #0fb77f;
+  outline: none;
+}
+
+.heroLocationOption + .heroLocationOption {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Contact host button — WhatsApp branding */
+.detailContactBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+}
+
+.detailContactBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(37, 211, 102, 0.4);
 }

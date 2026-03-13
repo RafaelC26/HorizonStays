@@ -3,6 +3,7 @@ import { addDays, differenceInCalendarDays } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getOptimizedImageUrl } from "../imageUtils";
+import WhatsAppReservationForm from "./WhatsAppReservationForm";
 
 const parseIsoDate = (isoValue) => {
   if (!isoValue) {
@@ -211,6 +212,7 @@ function StayDetailPage({
   const [isHostChatExpanded, setIsHostChatExpanded] = useState(false);
   const [activeHostChatKey, setActiveHostChatKey] = useState("primary");
   const [hostChatDraft, setHostChatDraft] = useState("");
+  const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
   const [hostChatThreads, setHostChatThreads] = useState(() => ({
     primary: t.detail.hostChat.messages,
     test: [
@@ -249,6 +251,8 @@ function StayDetailPage({
     () => detailImages.map((image) => getOptimizedImageUrl(image, { width: 360, height: 220, quality: 62 })),
     [detailImages]
   );
+
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.location} ${listing.title}`)}`;
 
   const formatPrice = (rawPrice) => {
     const [amount] = rawPrice.split("/");
@@ -373,10 +377,7 @@ function StayDetailPage({
   };
 
   const handleReserveClick = () => {
-    const canContinue = onReserveNow?.();
-    if (canContinue) {
-      setIsCheckoutDialogOpen(true);
-    }
+    setIsWhatsAppDialogOpen(true);
   };
 
   const closeCheckoutDialog = () => {
@@ -586,7 +587,7 @@ function StayDetailPage({
 
         <div className="detailLocationRow">
           <span>{listing.location}</span>
-          <button type="button" className="detailMapBtn">{t.catalog.showMap}</button>
+          <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailMapBtn">{t.catalog.showMap}</a>
         </div>
 
         <div className="detailLayout">
@@ -636,7 +637,7 @@ function StayDetailPage({
                   <p>{highlight}</p>
                 </div>
               ))}
-              <button type="button" className="detailMapBtn">{t.detail.mapLink}</button>
+              <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailMapBtn">{t.detail.mapLink}</a>
             </div>
 
             <div className="detailTabsRow">
@@ -749,12 +750,16 @@ function StayDetailPage({
 
             {activeTab === "location" && (
               <div className="detailLocationPanel">
-                <img
-                  className="detailMapPreview large"
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1000&h=620&fit=crop"
-                  alt={t.detail.mapPreviewAlt}
-                />
-                <p>{listing.location}</p>
+                <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailMapPreviewLink">
+                  <img
+                    className="detailMapPreview large"
+                    src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1000&h=620&fit=crop"
+                    alt={t.detail.mapPreviewAlt}
+                  />
+                </a>
+                <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailLocationTextLink">
+                  {listing.location}
+                </a>
               </div>
             )}
           </div>
@@ -806,13 +811,28 @@ function StayDetailPage({
               <p>{t.detail.reviewSummary}</p>
             </div>
 
-            <img
-              className="detailMapPreview"
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=520&fit=crop"
-              alt={t.detail.mapPreviewAlt}
-            />
+            <div className="detailMapEmbed">
+              <iframe
+                title={t.detail.mapPreviewAlt}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(listing.location)}&output=embed&z=14`}
+                width="100%"
+                height="220"
+                style={{ border: 0, borderRadius: "14px", display: "block" }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="detailMapEmbedLink"
+              >
+                {listing.location} ↗
+              </a>
+            </div>
 
-            <button className="detailContactBtn" type="button" onClick={openHostChat}>{t.detail.contactHost}</button>
+            <button className="detailContactBtn" type="button" onClick={() => setIsWhatsAppDialogOpen(true)}>{t.detail.contactHost}</button>
           </aside>
         </div>
       </div>
@@ -1063,6 +1083,17 @@ function StayDetailPage({
             </div>
           </div>
         </div>
+      )}
+
+      {isWhatsAppDialogOpen && (
+        <WhatsAppReservationForm
+          t={t}
+          language={language}
+          listing={listing}
+          checkInDate={checkInDate}
+          checkOutDate={checkOutDate}
+          onClose={() => setIsWhatsAppDialogOpen(false)}
+        />
       )}
     </div>
   );

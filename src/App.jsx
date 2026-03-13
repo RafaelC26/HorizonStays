@@ -569,6 +569,7 @@ function App() {
         onChangeCheckOut={setCheckOutDate}
         onCheckAvailability={handleCheckAvailability}
         onShowListings={openCatalogOverlay}
+        locations={listings.map(l => l.location)}
       />
 
       <ListingsSection

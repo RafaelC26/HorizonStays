@@ -59,12 +59,36 @@ export const translations = {
       cancel: "Cancelar",
       confirm: "Aceptar y reservar"
     },
+    waReservation: {
+      badge: "Finalizar en WhatsApp",
+      title: "Confirmar reserva",
+      subtitle: "Ingresa tus datos para generar el mensaje de reserva directa al anfitrión.",
+      labels: {
+        name: "Tu nombre completo",
+        phone: "Teléfono de WhatsApp",
+        guests: "Huéspedes",
+        comments: "Comentarios o dudas adicionales"
+      },
+      placeholders: {
+        name: "Ej: Juan Perez",
+        phone: "Ej: +57 321 0000000",
+        comments: "Ej: Llego después de las 3pm..."
+      },
+      summary: {
+        stay: "Estancia",
+        dates: "Fechas",
+        nightly: "Noche",
+        total: "Total estimado"
+      },
+      submit: "Enviar a WhatsApp",
+      whatsappMessage: "¡Hola! Quisiera reservar *{listing}*.\n\n*Detalles de mi estancia:*\n📅 *Fechas:* {dates}\n👥 *Huéspedes:* {guests}\n💰 *Monto total:* {total}\n\n*Mis datos:*\n👤 *Nombre:* {name}\n\n{comments}\n\nQuedo atento(a) a tu confirmación. ¡Muchas gracias!"
+    },
     hero: {
       title: "Casas con encanto en Boyaca",
       subtitle: "Encuentra alojamientos unicos en Boyaca, con ubicaciones tranquilas, comodidad y vistas inolvidables.",
       altTitle: "Escápate a lo Extraordinario",
       altSubtitle: "Refugios rurales seleccionados, desde villas en montañas neblinosas hasta fincas en viñedos soleados",
-      location: "Ubicación",
+      location: "Destino",
       locationPlaceholder: "Ciudad",
       date: "Entrada",
       searchBtn: "Buscar",
@@ -612,6 +636,30 @@ export const translations = {
       },
       cancel: "Cancel",
       confirm: "Accept and reserve"
+    },
+    waReservation: {
+      badge: "Finish on WhatsApp",
+      title: "Confirm Booking",
+      subtitle: "Enter your details to generate a direct booking message for the host.",
+      labels: {
+        name: "Full name",
+        phone: "WhatsApp number",
+        guests: "Guests",
+        comments: "Comments or questions"
+      },
+      placeholders: {
+        name: "Ex: John Doe",
+        phone: "Ex: +1 555 000 0000",
+        comments: "Ex: Arriving after 3pm..."
+      },
+      summary: {
+        stay: "Stay",
+        dates: "Dates",
+        nightly: "Nightly",
+        total: "Estimated total"
+      },
+      submit: "Send to WhatsApp",
+      whatsappMessage: "Hi! I would like to book *{listing}*.\n\n*My stay details:*\n📅 *Dates:* {dates}\n👥 *Guests:* {guests}\n💰 *Total amount:* {total}\n\n*My details:*\n👤 *Name:* {name}\n\n{comments}\n\nI look forward to your confirmation. Thank you!"
     },
     hero: {
       title: "Boyaca Homes, Beautifully Curated",

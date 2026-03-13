@@ -198,6 +198,72 @@ function HeroDateField({
   );
 }
 
+function HeroLocationField({ t, locationValue, locations, onChangeLocation }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  const uniqueLocations = useMemo(() => {
+    return [...new Set(locations || [])];
+  }, [locations]);
+
+  const filteredLocations = useMemo(() => {
+    if (!locationValue) return uniqueLocations;
+    const term = locationValue.toLowerCase();
+    return uniqueLocations.filter(loc => loc.toLowerCase().includes(term));
+  }, [uniqueLocations, locationValue]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  return (
+    <div className="searchInputWrapper heroLocationField" ref={containerRef}>
+      <label htmlFor="hero-location" className="searchFieldLabel">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor"/>
+        </svg>
+        <span>{t.hero.location}</span>
+      </label>
+      <input
+        id="hero-location"
+        className="heroLocationInput"
+        type="text"
+        autoComplete="off"
+        value={locationValue}
+        onFocus={() => setIsOpen(true)}
+        onChange={(event) => {
+          onChangeLocation?.(event.target.value);
+          setIsOpen(true);
+        }}
+        placeholder={t.hero.locationPlaceholder}
+      />
+      {isOpen && filteredLocations.length > 0 && (
+        <div className="heroLocationMenu" role="listbox">
+          {filteredLocations.map((loc) => (
+            <button
+              key={loc}
+              type="button"
+              className="heroLocationOption"
+              onClick={() => {
+                onChangeLocation?.(loc);
+                setIsOpen(false);
+              }}
+            >
+              {loc}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function HeroGuestsField({ t, guestsValue, onChangeGuests }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
@@ -303,7 +369,8 @@ function HeroSection({
   onChangeCheckIn,
   onChangeCheckOut,
   onCheckAvailability,
-  onShowListings
+  onShowListings,
+  locations
 }) {
   const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
 
@@ -349,22 +416,12 @@ function HeroSection({
           }}
         >
           <div className="searchField">
-            <div className="searchInputWrapper">
-              <label htmlFor="hero-location" className="searchFieldLabel">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor"/>
-                </svg>
-                <span>{t.hero.location}</span>
-              </label>
-              <input
-                id="hero-location"
-                className="heroLocationInput"
-                type="text"
-                value={locationValue}
-                onChange={(event) => onChangeLocation?.(event.target.value)}
-                placeholder={t.hero.locationPlaceholder}
-              />
-            </div>
+            <HeroLocationField
+              t={t}
+              locationValue={locationValue}
+              locations={locations}
+              onChangeLocation={onChangeLocation}
+            />
           </div>
 
           <div className="searchDivider" />
