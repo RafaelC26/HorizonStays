@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getOptimizedImageUrl } from "../imageUtils";
 import WhatsAppReservationForm from "./WhatsAppReservationForm";
+import MapView from "./MapView";
+import MapModal from "./MapModal";
+import PropertyGallery from "./PropertyGallery";
 
 const parseIsoDate = (isoValue) => {
   if (!isoValue) {
@@ -175,27 +178,71 @@ function DetailDateRangeField({
   );
 }
 
+const USER_MENU_ICONS = {
+  profile: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
+  bookings: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  ),
+  saved: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
+  settings: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+  help: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  ),
+  logout: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  )
+};
+
 function StayDetailPage({
-  t,
-  language,
-  heroFilters,
-  checkInDate: initialCheckInDate,
-  checkOutDate: initialCheckOutDate,
-  onFilterChange,
-  onChangeCheckIn,
-  onChangeCheckOut,
-  onToggleLanguage,
-  isUserMenuOpen,
-  setIsUserMenuOpen,
-  userMenuRef,
-  onUserMenuAction,
-  isAuthenticated = true,
-  onAuthAction,
-  onReserveNow,
-  onReservationConfirmed,
-  listings,
-  logoImg,
-  perNightLabel
+ t,
+ language,
+ heroFilters,
+ checkInDate: initialCheckInDate,
+ checkOutDate: initialCheckOutDate,
+ onFilterChange,
+ onChangeCheckIn,
+ onChangeCheckOut,
+ onToggleLanguage,
+ isUserMenuOpen,
+ setIsUserMenuOpen,
+ userMenuRef,
+ onUserMenuAction,
+ isAuthenticated = true,
+ onAuthAction,
+ onReserveNow,
+ onReservationConfirmed,
+ listings,
+ logoImg,
+ perNightLabel,
+ currentUser,
+ userMenuOptions
 }) {
   const testChatAvatar = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face";
   const navigate = useNavigate();
@@ -213,6 +260,9 @@ function StayDetailPage({
   const [activeHostChatKey, setActiveHostChatKey] = useState("primary");
   const [hostChatDraft, setHostChatDraft] = useState("");
   const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [isImageLightboxOpen, setIsImageLightboxOpen] = useState(false);
+  const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
   const [hostChatThreads, setHostChatThreads] = useState(() => ({
     primary: t.detail.hostChat.messages,
     test: [
@@ -228,6 +278,41 @@ function StayDetailPage({
     t.profileDashboard.payments.initialValues.selectedMethodId
   );
   const titleRef = useRef(null);
+
+  const renderUserMenu = () => (
+    <div className="userMenuContainer" ref={userMenuRef}>
+      <button
+        className="avatarButton"
+        onClick={() => setIsUserMenuOpen((prev) => !prev)}
+        type="button"
+      >
+        <div className="userAvatar">
+          <img src={currentUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face"} alt="User" />
+        </div>
+      </button>
+
+      {isUserMenuOpen && (
+        <div className="userDropdown" role="menu">
+          {(userMenuOptions || t.userMenu.options).map((option) => (
+            <div key={option.key} className="userMenuRowWrap">
+              {option.key === "logout" && <div className="userMenuDivider" />}
+              <button
+                className={`userMenuItem ${option.key === "logout" ? "danger" : ""}`}
+                type="button"
+                onClick={() => {
+                  onUserMenuAction?.(option.key);
+                  setIsUserMenuOpen(false);
+                }}
+              >
+                <span className="userMenuItemIcon">{USER_MENU_ICONS[option.key]}</span>
+                {option.label}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   const listing = useMemo(() => {
     const id = Number(listingId);
@@ -501,11 +586,10 @@ function StayDetailPage({
 
   return (
     <div className="detailPage">
-      <div className="detailTopBar">
-        <button className="catalogBrand" type="button" onClick={() => navigate("/")}>
-          <div className="logo catalogLogo">
-            <img src={logoImg} alt="La Villa" className="logoImg" />
-          </div>
+      <div className={`detailTopBar ${showStickyTitle ? "scrolled" : ""}`}>
+        <button className="detailBrand" type="button" onClick={() => navigate("/")}>
+          <img src={logoImg} alt="La Villa" className="detailLogoImg" />
+          <span className="detailBrandText">La Villa</span>
         </button>
 
         <div className="detailTopCenter">
@@ -513,110 +597,121 @@ function StayDetailPage({
         </div>
 
         <div className="detailTopActions">
-          {isAuthenticated ? (
-            <div className="userMenuContainer" ref={userMenuRef}>
-              <button
-                className="avatarButton"
-                onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                aria-expanded={isUserMenuOpen}
-                aria-haspopup="menu"
-                aria-label={t.userMenu.openLabel}
-                type="button"
-              >
-                <div className="userAvatar">
-                  <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face" alt="User" />
-                </div>
-              </button>
-
-              {isUserMenuOpen && (
-                <div className="userDropdown" role="menu" aria-label={t.userMenu.actionsLabel}>
-                  {t.userMenu.options.map((option) => (
-                    <button
-                      key={option.key}
-                      className={`userMenuItem ${option.key === "logout" ? "danger" : ""}`}
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        onUserMenuAction?.(option.key);
-                        setIsUserMenuOpen(false);
-                      }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="authButtons" aria-label={t.navbar.authActionsLabel}>
-              <button
-                className="authBtn authBtnSecondary"
-                type="button"
-                onClick={() => onAuthAction?.("login")}
-              >
-                {t.navbar.login}
-              </button>
-              <button
-                className="authBtn authBtnPrimary"
-                type="button"
-                onClick={() => onAuthAction?.("register")}
-              >
-                {t.navbar.register}
-              </button>
-            </div>
-          )}
-
           <button className="languageToggle" onClick={onToggleLanguage} type="button">
             {language === "es" ? "EN" : "ES"}
           </button>
+          
+          {isAuthenticated ? (
+            renderUserMenu()
+          ) : (
+            <button className="authBtn authBtnPrimary" onClick={() => onAuthAction?.("login")}>
+              {t.navbar.login}
+            </button>
+          )}
         </div>
       </div>
 
       <div className="detailContent">
-        <button className="detailBreadcrumb detailBackCrumb" type="button" onClick={() => navigate(-1)}>
-          <span className="detailBackArrow">‹</span>
-          <span>{`${t.detail.breadcrumbPrefix} / ${listing.location} / ${listing.title}`}</span>
-        </button>
-        <h1 ref={titleRef}>{listing.title}</h1>
-
-        <div className="detailRatingRow">
-          <span className="detailStars">★★★★★</span>
-          <span>{listing.rating}</span>
-          <span>{t.detail.reviews}</span>
-        </div>
-
-        <div className="detailLocationRow">
+        <nav className="detailBreadcrumbs">
+          <button className="detailBackCrumb" type="button" onClick={() => navigate(-1)}>
+            <span>{t.detail.breadcrumbPrefix}</span>
+          </button>
+          <span className="detailCrumbSep">/</span>
           <span>{listing.location}</span>
-          <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailMapBtn">{t.catalog.showMap}</a>
+          <span className="detailCrumbSep">/</span>
+          <span className="detailCrumbActive">{listing.title}</span>
+        </nav>
+
+        <div className="detailHeaderIntro">
+          <h1 ref={titleRef}>{listing.title}</h1>
+          <div className="detailHeaderMeta">
+            <div className="detailRatingRow">
+              <span className="detailStars">★★★★★</span>
+              <span className="detailRatingScore">{listing.rating}</span>
+              <span className="detailReviewCount">({listing.reviews} {t.detail.reviews})</span>
+            </div>
+            <div className="detailLocationRow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>{listing.location}</span>
+              <button
+                type="button"
+                className="detailMapLink"
+                onClick={() => {
+                  setActiveTab("location");
+                  const tabsElement = document.querySelector(".detailTabsRow");
+                  if (tabsElement) {
+                    tabsElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+              >
+                {t.catalog.showMap}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="detailLayout">
           <div className="detailMainColumn">
-            <div className="detailHeroImageWrap">
-              <img
-                src={optimizedDetailHeroImages[activeImageIndex]}
-                alt={listing.title}
-                className="detailHeroImage"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-              />
-              <button className="detailSlideNav prev" type="button" onClick={prevImage}>‹</button>
-              <button className="detailSlideNav next" type="button" onClick={nextImage}>›</button>
-              <span className="detailCounter">{`${activeImageIndex + 1} / ${detailImages.length}`}</span>
-            </div>
+            <div className="detailGalleryGrid">
+              <div 
+                className="detailHeroImageWrap"
+                onClick={() => {
+                  setLightboxImageIndex(activeImageIndex);
+                  setIsImageLightboxOpen(true);
+                }}
+                style={{ cursor: 'zoom-in' }}
+              >
+                <img
+                  src={optimizedDetailHeroImages[activeImageIndex]}
+                  alt={listing.title}
+                  className="detailHeroImage"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
+                <div className="detailGalleryNav">
+                  <button 
+                    className="detailSlideNav" 
+                    type="button" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prevImage();
+                    }}
+                  >
+                    ‹
+                  </button>
+                  <button 
+                    className="detailSlideNav" 
+                    type="button" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage();
+                    }}
+                  >
+                    ›
+                  </button>
+                </div>
+                <span className="detailCounter">{`${activeImageIndex + 1} / ${detailImages.length}`}</span>
+                <div className="detailGalleryExpand">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                  </svg>
+                  <span>{language === 'es' ? 'Ver en grande' : 'View full size'}</span>
+                </div>
+              </div>
 
-            <div className="detailThumbRow">
-              {detailImages.map((image, index) => (
-                <button
-                  key={image}
-                  className={`detailThumbBtn ${index === activeImageIndex ? "active" : ""}`}
-                  type="button"
-                  onClick={() => setActiveImageIndex(index)}
-                >
-                  <img src={optimizedDetailThumbImages[index]} alt={listing.title} className="detailThumb" loading="lazy" decoding="async" />
-                </button>
-              ))}
+              <div className="detailThumbCol">
+                {detailImages.slice(1, 5).map((image, index) => (
+                  <button
+                    key={image}
+                    className={`detailThumbBtn ${index + 1 === activeImageIndex ? "active" : ""}`}
+                    type="button"
+                    onClick={() => setActiveImageIndex(index + 1)}
+                  >
+                    <img src={optimizedDetailThumbImages[index + 1]} alt={listing.title} className="detailThumb" loading="lazy" decoding="async" />
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="detailFacts">
@@ -637,7 +732,19 @@ function StayDetailPage({
                   <p>{highlight}</p>
                 </div>
               ))}
-              <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailMapBtn">{t.detail.mapLink}</a>
+              <button
+                type="button"
+                className="detailMapBtn"
+                onClick={() => {
+                  setActiveTab("location");
+                  const tabsElement = document.querySelector(".detailTabsRow");
+                  if (tabsElement) {
+                    tabsElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+              >
+                {t.detail.mapLink}
+              </button>
             </div>
 
             <div className="detailTabsRow">
@@ -712,11 +819,11 @@ function StayDetailPage({
 
             {activeTab === "details" && (
               <>
-                <div className="detailRoomGallery">
-                  {optimizedDetailHeroImages.slice(1, 4).map((image, index) => (
-                    <img key={`${image}-room`} src={image} alt={listing.title} loading={index === 0 ? "eager" : "lazy"} decoding="async" />
-                  ))}
-                </div>
+                <PropertyGallery 
+                  images={detailImages}
+                  title={listing.title}
+                  language={language}
+                />
 
                 <h3 className="detailSleepTitle">{t.detail.whereYouWillSleep}</h3>
                 <div className="detailSleepGrid">
@@ -743,30 +850,111 @@ function StayDetailPage({
 
             {activeTab === "reviews" && (
               <div className="detailReviewPanel">
-                <h3>{t.detail.reviewSummary}</h3>
-                <p>{translatedDescription}</p>
+                <div className="reviewOverviewCard">
+                  <div className="reviewScoreBig">
+                    <span className="reviewScoreNumber">{listing.rating}</span>
+                    <div className="reviewScoreMeta">
+                      <span className="reviewStarsBig">★★★★★</span>
+                      <span className="reviewCountLabel">{t.detail.reviewSummary}</span>
+                    </div>
+                  </div>
+                  <div className="reviewBarsGrid">
+                    {[
+                      { label: language === "es" ? "Limpieza" : "Cleanliness", score: 4.9 },
+                      { label: language === "es" ? "Precisión" : "Accuracy", score: 5.0 },
+                      { label: language === "es" ? "Comunicación" : "Communication", score: 4.8 },
+                      { label: language === "es" ? "Ubicación" : "Location", score: 4.9 },
+                      { label: language === "es" ? "Check-in" : "Check-in", score: 5.0 },
+                      { label: language === "es" ? "Calidad-Precio" : "Value", score: 4.7 }
+                    ].map((cat) => (
+                      <div key={cat.label} className="reviewBarRow">
+                        <span className="reviewBarLabel">{cat.label}</span>
+                        <div className="reviewBarTrack">
+                          <div className="reviewBarFill" style={{ width: `${(cat.score / 5) * 100}%` }} />
+                        </div>
+                        <span className="reviewBarValue">{cat.score}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="reviewCardsGrid">
+                  {[
+                    { name: "María G.", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face", date: language === "es" ? "Febrero 2026" : "February 2026", text: language === "es" ? "Increíble estancia. Todo impecable, la ubicación perfecta y Andrés fue un gran anfitrión. Sin duda volveré." : "Amazing stay. Everything was spotless, perfect location and Andrés was a great host. Will definitely return.", rating: 5 },
+                    { name: "Carlos M.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face", date: language === "es" ? "Enero 2026" : "January 2026", text: language === "es" ? "Espacio muy acogedor, las fotos no le hacen justicia. La atención del anfitrión fue excepcional." : "Very cozy space, photos don't do it justice. Host attention was exceptional.", rating: 5 },
+                    { name: "Laura P.", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face", date: language === "es" ? "Diciembre 2025" : "December 2025", text: language === "es" ? "Perfecto para desconectarse. Limpieza impecable y todo lo necesario. La vista desde el balcón es espectacular." : "Perfect to disconnect. Spotless cleanliness and everything you need. Balcony view is spectacular.", rating: 5 },
+                    { name: "David R.", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face", date: language === "es" ? "Noviembre 2025" : "November 2025", text: language === "es" ? "Superó nuestras expectativas. La zona es tranquila y hermosa. Comunicación rápida y check-in muy fácil." : "Exceeded our expectations. Quiet, beautiful area. Fast communication and easy check-in.", rating: 4 }
+                  ].map((review) => (
+                    <article key={review.name} className="reviewCard">
+                      <div className="reviewCardHead">
+                        <img src={review.avatar} alt={review.name} className="reviewCardAvatar" />
+                        <div className="reviewCardInfo">
+                          <strong>{review.name}</strong>
+                          <span>{review.date}</span>
+                        </div>
+                        <span className="reviewCardStars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+                      </div>
+                      <p className="reviewCardText">{review.text}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
             )}
 
             {activeTab === "location" && (
               <div className="detailLocationPanel">
-                <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailMapPreviewLink">
-                  <img
-                    className="detailMapPreview large"
-                    src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1000&h=620&fit=crop"
-                    alt={t.detail.mapPreviewAlt}
+                <div className="detailLocationMapWrap detailLocationMapWrapEnhanced">
+                  <MapView
+                    location={listing.location}
+                    title={listing.title}
+                    coordinates={listing.coordinates}
+                    language={language}
+                    height="480px"
+                    showExpandButton={true}
+                    onExpand={() => setIsMapModalOpen(true)}
+                    t={t}
                   />
-                </a>
-                <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="detailLocationTextLink">
-                  {listing.location}
-                </a>
+                  <div className="detailLocationOverlayCard detailLocationOverlayCardEnhanced">
+                    <div className="detailLocationIcon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                    </div>
+                    <div className="detailLocationMeta">
+                      <h4>{listing.location}</h4>
+                      <p>{translatedDescription && translatedDescription.substring(0, 80)}...</p>
+                    </div>
+                    <button 
+                      onClick={() => setIsMapModalOpen(true)}
+                      className="detailLocationDirectionsBtn detailLocationExpandBtn"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                      </svg>
+                      {language === "es" ? "Ver mapa completo" : "View full map"}
+                    </button>
+                  </div>
+                </div>
+                <div className="detailLocationHighlights">
+                  {[
+                    { icon: "🏔️", text: language === "es" ? "Zona tranquila y segura" : "Quiet and safe area" },
+                    { icon: "🚗", text: language === "es" ? "Fácil acceso en carro" : "Easy car access" },
+                    { icon: "🛒", text: language === "es" ? "Comercios a 5 min" : "Shops 5 min away" },
+                    { icon: "☕", text: language === "es" ? "Cafeterías y restaurantes cerca" : "Cafés & restaurants nearby" }
+                  ].map((item) => (
+                    <div key={item.text} className="detailLocationHighlight">
+                      <span>{item.icon}</span>
+                      <p>{item.text}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
 
           <aside className="detailSidebar">
             <div className="detailBookingCard">
-              <p className="detailPrice">{formatPrice(listing.price)}</p>
+              <div className="detailPrice">
+                <strong>{formatPrice(listing.price)}</strong>
+              </div>
               <div className="detailBookingDates">
                 <DetailDateRangeField
                   language={language}
@@ -778,61 +966,93 @@ function StayDetailPage({
                 />
               </div>
               <button
-                className="bookBtn detailReserveBtn"
+                className="detailReserveBtn"
                 type="button"
                 disabled={!hasFullRange}
                 onClick={handleReserveClick}
               >
                 {t.navbar.bookNow}
               </button>
-              <p className="detailMuted">{hasFullRange ? t.detail.noCharge : t.detail.selectDates}</p>
               <div className="detailSummary">
                 <div><span>{t.detail.duration}</span><span>{hasFullRange ? `${nights} ${t.detail.nights}` : t.detail.selectDates}</span></div>
                 <div><span>{t.detail.nightlyRate}</span><span>{`$${nightlyRate}`}</span></div>
-                <div><span>{t.detail.totalBeforeTax}</span><span>{hasFullRange ? `$${totalBeforeTax}` : "-"}</span></div>
+                <div className="totalRow"><span>{t.detail.totalBeforeTax}</span><span>{hasFullRange ? `$${totalBeforeTax}` : "-"}</span></div>
               </div>
             </div>
 
             <div className="detailAmenitiesCard">
               <h3>{t.detail.whatThisPlaceOffers}</h3>
-              <ul>
+              <div className="detailAmenitiesGrid">
                 {translatedAmenities.map((amenity) => (
-                  <li key={amenity}>✓ {amenity}</li>
+                  <div key={amenity} className="detailAmenityListItem">
+                    <span className="detailAmenityCheck">✓</span>
+                    <span>{amenity}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
 
-            <div className="detailHostCard">
-              <h4>
-                {`${t.detail.hostBadge} · `}
-                <button className="detailHostLink" type="button" onClick={openHostDialog}>{t.detail.hostName}</button>
-              </h4>
-              <p>{t.detail.hostSince}</p>
-              <p>{t.detail.reviewSummary}</p>
-            </div>
+              <div className="detailHostCard">
+                <div className="hostMiniInfo">
+                  <div className="hostMiniAvatarWrap">
+                    <img src={hostDialog.image} alt={hostDialog.name} className="hostMiniAvatar" />
+                    <span className="hostStatusDot"></span>
+                  </div>
+                  <div className="hostMiniText">
+                    <p className="hostLabel">{t.detail.hostBadge}</p>
+                    <button className="detailHostLink" type="button" onClick={openHostDialog}>
+                      {t.detail.hostName}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="hostCardStats">
+                  <div className="hostCardStat">
+                    <span className="statIcon">★</span>
+                    <span>{listing.rating}</span>
+                  </div>
+                  <div className="hostCardStat">
+                    <span className="statIcon">🛡️</span>
+                    <span>{t.detail.hostBadge}</span>
+                  </div>
+                </div>
 
-            <div className="detailMapEmbed">
-              <iframe
-                title={t.detail.mapPreviewAlt}
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(listing.location)}&output=embed&z=14`}
-                width="100%"
-                height="220"
-                style={{ border: 0, borderRadius: "14px", display: "block" }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="detailMapEmbedLink"
-              >
-                {listing.location} ↗
-              </a>
-            </div>
+                <div className="hostCardActions">
+                  <button className="hostContactSidebarBtn" type="button" onClick={() => setIsWhatsAppDialogOpen(true)}>
+                    {t.detail.contactHost}
+                  </button>
+                  <button 
+                    className="hostKnowMoreSidebarBtn" 
+                    type="button" 
+                    onClick={openHostDialog}
+                  >
+                    {hostDialog.profileButton}
+                    <span className="btnArrow">→</span>
+                  </button>
+                </div>
+              </div>
 
-            <button className="detailContactBtn" type="button" onClick={() => setIsWhatsAppDialogOpen(true)}>{t.detail.contactHost}</button>
+              <div className="detailMapEmbed detailMapEmbedEnhanced">
+                <MapView
+                  location={listing.location}
+                  title={listing.title}
+                  coordinates={listing.coordinates}
+                  language={language}
+                  height="220px"
+                  showExpandButton={true}
+                  onExpand={() => setIsMapModalOpen(true)}
+                  t={t}
+                />
+                <button
+                  onClick={() => setIsMapModalOpen(true)}
+                  className="detailMapEmbedLink detailMapEmbedLinkEnhanced"
+                >
+                  <span>{listing.location}</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                  </svg>
+                </button>
+              </div>
           </aside>
         </div>
       </div>
@@ -984,31 +1204,41 @@ function StayDetailPage({
             aria-label={hostDialog.name}
             onClick={(event) => event.stopPropagation()}
           >
+            <button className="hostDialogClose" onClick={closeHostDialog}>×</button>
+            
             <div className="hostSpotlightHeader">
-              <img src={hostDialog.image} alt={hostDialog.name} className="hostSpotlightAvatar" />
-              <div>
+              <div className="hostSpotlightImage">
+                <img src={hostDialog.image} alt={hostDialog.name} />
+                <span className="hostSpotlightBadge">✓</span>
+              </div>
+              <div className="hostSpotlightTitles">
                 <h3>{hostDialog.name}</h3>
-                <p className="hostSpotlightBadge">{hostDialog.badge}</p>
-                <p className="hostSpotlightProperties">{hostDialog.properties}</p>
+                <p>{hostDialog.badge}</p>
               </div>
             </div>
 
-            <p className="hostSpotlightBio">{hostDialog.bio}</p>
+            <div className="hostSpotlightContent">
+              <p className="hostSpotlightProperties">{hostDialog.properties}</p>
+              <p className="hostSpotlightBio">{hostDialog.bio}</p>
+            </div>
 
             <div className="hostSpotlightStats">
               {hostDialog.stats.map((item) => (
                 <div key={item.label} className="hostSpotlightStatItem">
-                  <p className="hostSpotlightMetric">{`${item.icon} ${item.value}`}</p>
-                  <p className="hostSpotlightMetricLabel">{item.label}</p>
+                  <span className="statIcon">{item.icon}</span>
+                  <div className="statText">
+                    <strong>{item.value}</strong>
+                    <span>{item.label}</span>
+                  </div>
                 </div>
               ))}
             </div>
 
             <div className="hostSpotlightActions">
-              <button className="detailContactBtn hostSpotlightPrimary" type="button" onClick={openHostChat}>
+              <button className="hostSpotlightContact" type="button" onClick={openHostChat}>
                 {hostDialog.contactButton}
               </button>
-              <button className="hostSpotlightSecondary" type="button" onClick={() => navigate("/hosts/andres")}>
+              <button className="hostSpotlightProfile" type="button" onClick={() => navigate("/hosts/andres")}>
                 {hostDialog.profileButton}
               </button>
             </div>
@@ -1095,6 +1325,102 @@ function StayDetailPage({
           onClose={() => setIsWhatsAppDialogOpen(false)}
         />
       )}
+
+      {/* Map Modal */}
+      <MapModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        location={listing.location}
+        title={listing.title}
+        coordinates={listing.coordinates}
+        language={language}
+        t={t}
+      />
+
+      {/* Image Lightbox */}
+      {isImageLightboxOpen && (
+        <div 
+          className="detailImageLightbox"
+          onClick={() => setIsImageLightboxOpen(false)}
+        >
+          <div className="detailImageLightboxContent" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="detailImageLightboxClose"
+              onClick={() => setIsImageLightboxOpen(false)}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+
+            <button 
+              className="detailImageLightboxNav prev"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxImageIndex((prev) => (prev - 1 + detailImages.length) % detailImages.length);
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+
+            <button 
+              className="detailImageLightboxNav next"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxImageIndex((prev) => (prev + 1) % detailImages.length);
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
+
+            <div className="detailImageLightboxImageContainer">
+              <img 
+                src={optimizedDetailHeroImages[lightboxImageIndex]}
+                alt={listing.title}
+                className="detailImageLightboxImage"
+              />
+            </div>
+
+            <div className="detailImageLightboxInfo">
+              <span className="detailImageLightboxCounter">
+                {lightboxImageIndex + 1} / {detailImages.length}
+              </span>
+              <span className="detailImageLightboxTitle">{listing.title}</span>
+            </div>
+
+            <div className="detailImageLightboxThumbnails">
+              {detailImages.map((img, idx) => (
+                <button
+                  key={idx}
+                  className={`detailImageLightboxThumb ${idx === lightboxImageIndex ? 'active' : ''}`}
+                  onClick={() => setLightboxImageIndex(idx)}
+                >
+                  <img src={optimizedDetailThumbImages[idx]} alt={`${listing.title} ${idx + 1}`} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Sticky Booking Bar */}
+      <div className="detailMobileStickyBar">
+        <div className="mobileStickyPrice">
+          <strong>{formatPrice(listing.price)}</strong>
+          <span>{t.detail.totalLabel} {hasFullRange ? `$${totalBeforeTax}` : "-"}</span>
+        </div>
+        <button 
+          className="mobileStickyReserveBtn" 
+          type="button"
+          onClick={handleReserveClick}
+        >
+          {t.navbar.bookNow}
+        </button>
+      </div>
     </div>
   );
 }

@@ -524,6 +524,8 @@ function App() {
               listings={listings}
               logoImg={logoImg}
               perNightLabel={t.listings.perNight}
+              currentUser={currentUser}
+              userMenuOptions={userMenuOptions}
             />
           </Suspense>
         }
@@ -584,6 +586,7 @@ function App() {
 
       <ExperiencesSection
         t={t}
+        language={language}
         onSelectExperienceCategory={() => {}}
       />
       

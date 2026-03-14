@@ -32,6 +32,12 @@ function ProfileDashboardPage({
     ...(profile.payments?.initialValues || {})
   };
   const fallbackTripImage = "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=900&q=80";
+  const [statusMessage, setStatusMessage] = useState(null);
+  const showStatus = (msg) => {
+    setStatusMessage(msg);
+    setTimeout(() => setStatusMessage(null), 3000);
+  };
+
   const sectionFromQuery = searchParams.get("section");
   const allowedSections = new Set(["personal", "security", "payments", "trips", "favorites"]);
   const [activeSidebarKey, setActiveSidebarKey] = useState(
@@ -43,13 +49,14 @@ function ProfileDashboardPage({
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [securitySettings, setSecuritySettings] = useState(defaultSecuritySettings);
   const [paymentSettings, setPaymentSettings] = useState(defaultPaymentSettings);
-  const recommendedStays = profile.recommendedStays || profile.recommendedImages.map((image) => ({
+
+  const recommendedStays = useMemo(() => profile.recommendedStays || profile.recommendedImages.map((image) => ({
     image,
     country: "",
     title: "",
     price: "",
     categoryKey: "beach"
-  }));
+  })), [profile]);
 
   const activeTrips = useMemo(() => {
     return profile.trips.filter((trip) => trip.status === activeTabKey);
@@ -67,10 +74,13 @@ function ProfileDashboardPage({
   const isSecurityView = activeSidebarKey === "security";
   const isPaymentsView = activeSidebarKey === "payments";
   const isFavoritesView = activeSidebarKey === "favorites";
-  const footerRightsText = language === "es"
+
+  const isSpanish = language === "es";
+  const footerRightsText = isSpanish
     ? "® La Villa. Todos los derechos reservados."
     : "® La Villa. All rights reserved.";
-  const footerCreditPrefix = language === "es" ? "Experiencia Digital por " : "Digital experience by ";
+  const footerCreditPrefix = isSpanish ? "Experiencia Digital por " : "Digital experience by ";
+
   const favoriteListings = useMemo(
     () => listings.filter((listing) => favoriteListingIds.includes(listing.id)),
     [listings, favoriteListingIds]
@@ -89,6 +99,7 @@ function ProfileDashboardPage({
   const savePersonalEdit = () => {
     setPersonalInfo(personalDraft);
     setIsEditingPersonal(false);
+    showStatus(isSpanish ? "Información personal actualizada" : "Personal info updated");
   };
 
   const handleDraftChange = (field, value) => {
@@ -103,6 +114,7 @@ function ProfileDashboardPage({
       ...prev,
       [field]: !prev[field]
     }));
+    showStatus(isSpanish ? "Ajuste de seguridad guardado" : "Security setting saved");
   };
 
   const selectPaymentMethod = (methodId) => {
@@ -110,6 +122,7 @@ function ProfileDashboardPage({
       ...prev,
       selectedMethodId: methodId
     }));
+    showStatus(isSpanish ? "Método predeterminado actualizado" : "Default method updated");
   };
 
   const toggleAutopay = () => {
@@ -117,6 +130,7 @@ function ProfileDashboardPage({
       ...prev,
       autopayEnabled: !prev.autopayEnabled
     }));
+    showStatus(isSpanish ? "Pago automático actualizado" : "Autopay setting updated");
   };
 
   const handleSidebarSelection = (sectionKey) => {
@@ -163,6 +177,12 @@ function ProfileDashboardPage({
         showNavLinks={false}
       />
 
+      {statusMessage && (
+        <div className="dashStatusToast">
+          <p>{statusMessage}</p>
+        </div>
+      )}
+
       <main className="profileDashLayout">
         <aside className={`profileDashSidebar${isSidebarOpen ? " open" : " closed"}`}>
           <button className="sidebarToggleBtn" type="button" onClick={() => setIsSidebarOpen((open) => !open)}>
@@ -170,7 +190,11 @@ function ProfileDashboardPage({
           </button>
           {isSidebarOpen && (
             <div>
-              <div className="profileDashUserBlock">
+              <div 
+                className="profileDashUserBlock" 
+                style={{ cursor: "pointer" }}
+                onClick={() => handleSidebarSelection("personal")}
+              >
                 <img
                   className="profileDashUserPhoto"
                   src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face"
@@ -211,7 +235,7 @@ function ProfileDashboardPage({
 
         <section className="profileDashMain">
           <div className="profileDashBackRow">
-            <button className="catalogClose" type="button" onClick={() => navigate(-1)} aria-label={profile.nav.backLabel}>
+            <button className="catalogClose" type="button" onClick={() => navigate("/")} aria-label={profile.nav.backLabel}>
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M14.5 6.5L9 12L14.5 17.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -257,7 +281,12 @@ function ProfileDashboardPage({
                       <h3>{trip.title}</h3>
                       <p className="profileDashTripMeta">{trip.date} • {trip.guests}</p>
                       <div className="profileDashTripActions">
-                        <button type="button">{profile.editButton}</button>
+                        <button 
+                          type="button"
+                          onClick={() => showStatus(isSpanish ? "Función de edición próximamente" : "Edit feature coming soon")}
+                        >
+                          {profile.editButton}
+                        </button>
                         <button
                           type="button"
                           className="primary"
@@ -300,12 +329,12 @@ function ProfileDashboardPage({
                 <h2>{profile.personalInfo.profileSectionTitle}</h2>
                 <p>{profile.personalInfo.profileSectionHint}</p>
                 <ul className="profileDashSettingList">
-                  <li>
+                  <li onClick={() => showStatus(isSpanish ? "Cambiar foto próximamente" : "Change photo coming soon")} style={{ cursor: "pointer" }}>
                     <span>{profile.personalInfo.labels.photo}</span>
                     <strong>{personalInfo.photo}</strong>
                     <span className="chevron">›</span>
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.name}</span>
                     {isEditingPersonal ? (
                       <div className="profileDashInlineFields">
@@ -325,7 +354,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.birthDate}</span>
                     {isEditingPersonal ? (
                       <input
@@ -338,12 +367,13 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.gender}</span>
                     {isEditingPersonal ? (
                       <select
                         value={personalDraft.gender}
                         onChange={(event) => handleDraftChange("gender", event.target.value)}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {profile.personalInfo.genderOptions.map((option) => (
                           <option key={option} value={option}>{option}</option>
@@ -354,7 +384,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.idDocument}</span>
                     {isEditingPersonal ? (
                       <input
@@ -367,7 +397,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={() => showStatus(isSpanish ? "Cambiar contraseña próximamente" : "Change password coming soon")} style={{ cursor: "pointer" }}>
                     <span>{profile.personalInfo.labels.password}</span>
                     <strong>{personalInfo.passwordStatus}</strong>
                     <span className="chevron">›</span>
@@ -378,7 +408,7 @@ function ProfileDashboardPage({
               <article className="profileDashPersonalCard">
                 <h2>{profile.personalInfo.contactSectionTitle}</h2>
                 <ul className="profileDashSettingList">
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.email}</span>
                     {isEditingPersonal ? (
                       <input
@@ -391,7 +421,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.phone}</span>
                     {isEditingPersonal ? (
                       <input
@@ -404,7 +434,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.address}</span>
                     {isEditingPersonal ? (
                       <input
@@ -417,7 +447,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.city}</span>
                     {isEditingPersonal ? (
                       <input
@@ -430,7 +460,7 @@ function ProfileDashboardPage({
                     )}
                     {!isEditingPersonal && <span className="chevron">›</span>}
                   </li>
-                  <li>
+                  <li onClick={!isEditingPersonal ? startPersonalEdit : undefined} style={{ cursor: !isEditingPersonal ? "pointer" : "default" }}>
                     <span>{profile.personalInfo.labels.country}</span>
                     {isEditingPersonal ? (
                       <input
@@ -486,7 +516,13 @@ function ProfileDashboardPage({
                   ))}
                 </ul>
                 <div className="profileDashSecurityActionRow">
-                  <button type="button" className="profileDashSecondaryBtn">{profile.security.closeOthersButton}</button>
+                  <button 
+                    type="button" 
+                    className="profileDashSecondaryBtn"
+                    onClick={() => showStatus(isSpanish ? "Sesiones cerradas correctamente" : "All other sessions closed")}
+                  >
+                    {profile.security.closeOthersButton}
+                  </button>
                 </div>
               </article>
 
@@ -505,7 +541,13 @@ function ProfileDashboardPage({
                 </div>
                 <div className="profileDashToggleRow">
                   <span>{profile.security.recoveryCodeLabel}</span>
-                  <button type="button" className="profileDashSecondaryBtn">{profile.security.generateCodeButton}</button>
+                  <button 
+                    type="button" 
+                    className="profileDashSecondaryBtn"
+                    onClick={() => showStatus(isSpanish ? "Nuevo código generado" : "New recovery code generated")}
+                  >
+                    {profile.security.generateCodeButton}
+                  </button>
                 </div>
               </article>
             </section>
@@ -539,7 +581,13 @@ function ProfileDashboardPage({
                   })}
                 </ul>
                 <div className="profileDashSecurityActionRow">
-                  <button type="button" className="profileDashSecondaryBtn">{profile.payments.addMethodButton}</button>
+                  <button 
+                    type="button" 
+                    className="profileDashSecondaryBtn"
+                    onClick={() => showStatus(isSpanish ? "Función de añadir método próximamente" : "Add payment method coming soon")}
+                  >
+                    {profile.payments.addMethodButton}
+                  </button>
                 </div>
               </article>
 
@@ -561,7 +609,13 @@ function ProfileDashboardPage({
                     <li key={invoice.id}>
                       <span>{invoice.period}</span>
                       <strong>{`${invoice.amount} • ${invoice.status}`}</strong>
-                      <button type="button" className="profileDashTinyBtn">{profile.payments.downloadButton}</button>
+                      <button 
+                        type="button" 
+                        className="profileDashTinyBtn"
+                        onClick={() => showStatus(isSpanish ? "Descargando factura..." : "Downloading invoice...")}
+                      >
+                        {profile.payments.downloadButton}
+                      </button>
                     </li>
                   ))}
                 </ul>

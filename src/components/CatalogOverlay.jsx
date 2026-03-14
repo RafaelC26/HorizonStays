@@ -249,10 +249,9 @@ function CatalogOverlay({
   return (
     <div className="catalogOverlay" role="dialog" aria-modal="true" aria-label={t.catalog.title}>
       <div className="catalogTopBar">
-        <button className="catalogBrand" type="button" onClick={onClose}>
-          <div className="logo catalogLogo">
-            <img src={logoImg} alt="La Villa" className="logoImg" />
-          </div>
+        <button className="detailBrand" type="button" onClick={onClose}>
+          <img src={logoImg} alt="La Villa" className="detailLogoImg" />
+          <span className="detailBrandText">La Villa</span>
         </button>
 
         <div className="catalogSearchShell">
@@ -369,7 +368,16 @@ function CatalogOverlay({
             <h2>{t.catalog.title}</h2>
             <p>{t.catalog.subtitle}</p>
           </div>
-          <button className="catalogMapBtn" type="button">{t.catalog.showMap}</button>
+          <button
+            className="catalogMapBtn"
+            type="button"
+            onClick={() => {
+              const query = heroFilters.location || "Colombia";
+              window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, "_blank");
+            }}
+          >
+            {t.catalog.showMap}
+          </button>
         </div>
 
         <div className="catalogBody">
@@ -455,34 +463,42 @@ function CatalogOverlay({
           </aside>
 
           <div className="catalogGrid">
-            {catalogListings.map((listing) => (
-              <button
-                key={`catalog-${listing.id}`}
-                className="catalogCard"
-                type="button"
-                onClick={() => onSelectListing?.(listing.id)}
-              >
-                <img
-                  src={getOptimizedImageUrl(listing.image, { width: 720, height: 460, quality: 66 })}
-                  srcSet={[
-                    `${getOptimizedImageUrl(listing.image, { width: 420, height: 270, quality: 62 })} 420w`,
-                    `${getOptimizedImageUrl(listing.image, { width: 720, height: 460, quality: 66 })} 720w`
-                  ].join(", ")}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                  alt={listing.title}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="catalogCardContent">
-                  <h3>{listing.title}</h3>
-                  <p className="catalogCardLocation">{listing.location}</p>
-                  <div className="catalogCardFooter">
-                    <span>{formatPrice(listing.price)}</span>
-                    <span>★ {listing.rating}</span>
+            {catalogListings.length > 0 ? (
+              catalogListings.map((listing) => (
+                <button
+                  key={`catalog-${listing.id}`}
+                  className="catalogCard"
+                  type="button"
+                  onClick={() => onSelectListing?.(listing.id)}
+                >
+                  <img
+                    src={getOptimizedImageUrl(listing.image, { width: 720, height: 460, quality: 66 })}
+                    srcSet={[
+                      `${getOptimizedImageUrl(listing.image, { width: 420, height: 270, quality: 62 })} 420w`,
+                      `${getOptimizedImageUrl(listing.image, { width: 720, height: 460, quality: 66 })} 720w`
+                    ].join(", ")}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    alt={listing.title}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="catalogCardContent">
+                    <h3>{listing.title}</h3>
+                    <p className="catalogCardLocation">{listing.location}</p>
+                    <div className="catalogCardFooter">
+                      <span>{formatPrice(listing.price)}</span>
+                      <span>★ {listing.rating}</span>
+                    </div>
                   </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))
+            ) : (
+              <div className="catalogNoResults">
+                <div className="noResultsIcon">🔍</div>
+                <h3>{language === "es" ? "No se encontraron alojamientos" : "No accommodations found"}</h3>
+                <p>{language === "es" ? "Prueba ajustando tus filtros de búsqueda." : "Try adjusting your search filters."}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

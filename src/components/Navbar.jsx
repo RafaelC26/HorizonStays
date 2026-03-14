@@ -58,8 +58,12 @@ function Navbar({
   userMenuOptions
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
     const handleResize = () => {
       if (window.innerWidth > 992) {
         setIsMobileMenuOpen(false);
@@ -74,10 +78,12 @@ function Navbar({
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", handleEscape);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleEscape);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -105,7 +111,7 @@ function Navbar({
   };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
       <div className="logo">
         <img src={logoImg} alt="La Villa" className="logoImg" />
       </div>

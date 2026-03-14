@@ -20,15 +20,29 @@ function HostDashboardPage({
   const [searchParams, setSearchParams] = useSearchParams();
   const isSpanish = language === "es";
   const currentSection = searchParams.get("section") || "admin";
-  const footerRightsText = isSpanish
-    ? "® La Villa. Todos los derechos reservados."
-    : "® La Villa. All rights reserved.";
-  const footerCreditPrefix = isSpanish ? "Experiencia Digital por " : "Digital experience by ";
 
+  const [statusMessage, setStatusMessage] = useState(null);
+  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [hostListings, setHostListings] = useState(allListings);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editListing, setEditListing] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 900);
+
+  const showStatus = (msg) => {
+    setStatusMessage(msg);
+    setTimeout(() => setStatusMessage(null), 3000);
+  };
+
+  const setSection = (section) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("section", section);
+    setSearchParams(params, { replace: true });
+  };
+
+  const footerRightsText = isSpanish
+    ? "® La Villa. Todos los derechos reservados."
+    : "® La Villa. All rights reserved.";
+  const footerCreditPrefix = isSpanish ? "Experiencia Digital por " : "Digital experience by ";
 
   useEffect(() => {
     // Simulación: cargar alojamientos del host
@@ -119,27 +133,6 @@ function HostDashboardPage({
     [isSpanish]
   );
 
-  const managementItems = useMemo(
-    () => [
-      {
-        key: "availability",
-        title: isSpanish ? "Disponibilidad" : "Availability",
-        text: isSpanish ? "Calendario por propiedad con bloques y cupos activos." : "Per-property calendar with active blocks and capacity."
-      },
-      {
-        key: "pricing",
-        title: isSpanish ? "Precios dinamicos" : "Dynamic pricing",
-        text: isSpanish ? "Ajustes automaticos por temporada y ocupacion." : "Automatic adjustments by season and occupancy."
-      },
-      {
-        key: "promo",
-        title: isSpanish ? "Promociones" : "Promotions",
-        text: isSpanish ? "Cupones y descuentos por estadias largas." : "Coupons and discounts for long stays."
-      }
-    ],
-    [isSpanish]
-  );
-
   const hostMenuItems = useMemo(
     () => [
       { key: "admin", label: isSpanish ? "Panel admin" : "Admin panel" },
@@ -152,14 +145,6 @@ function HostDashboardPage({
     ],
     [isSpanish]
   );
-
-  const setSection = (section) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("section", section);
-    setSearchParams(params, { replace: true });
-  };
-
-  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
 
   function handleAddListing(e) {
     e.preventDefault();
@@ -175,6 +160,7 @@ function HostDashboardPage({
     };
     setHostListings([...hostListings, newListing]);
     setShowAddForm(false);
+    showStatus(isSpanish ? "Alojamiento añadido" : "Listing added");
     form.reset();
   }
 
@@ -196,11 +182,22 @@ function HostDashboardPage({
     };
     setHostListings(hostListings.map(l => l.id === updatedListing.id ? updatedListing : l));
     setEditListing(null);
+    showStatus(isSpanish ? "Alojamiento actualizado" : "Listing updated");
   }
 
   function handleDeleteListing(id) {
     setHostListings(hostListings.filter(l => l.id !== id));
+    showStatus(isSpanish ? "Alojamiento eliminado" : "Listing deleted");
   }
+
+  const handleExport = (format) => {
+    showStatus(isSpanish ? `Exportando datos a ${format}...` : `Exporting data to ${format}...`);
+  };
+
+  const handleReservationAction = (id, action) => {
+    showStatus(isSpanish ? `Reserva ${id} ${action === "accept" ? "aceptada" : "cancelada"}` : `Reservation ${id} ${action === "accept" ? "accepted" : "canceled"}`);
+  };
+
 
   return (
     <div className="profileDashPage hostDashPage">
@@ -220,6 +217,12 @@ function HostDashboardPage({
         userMenuOptions={t.userMenu.hostOptions}
       />
 
+      {statusMessage && (
+        <div className="dashStatusToast">
+          <p>{statusMessage}</p>
+        </div>
+      )}
+
       <main className="profileDashLayout">
         <aside className={`profileDashSidebar${isSidebarOpen ? " open" : " closed"}`}>
           <button className="sidebarToggleBtn" type="button" onClick={() => setIsSidebarOpen((open) => !open)}>
@@ -227,7 +230,11 @@ function HostDashboardPage({
           </button>
           {isSidebarOpen && (
             <div>
-              <div className="profileDashUserBlock">
+              <div 
+                className="profileDashUserBlock" 
+                style={{ cursor: "pointer" }}
+                onClick={() => setSection("admin-info")}
+              >
                 <img className="profileDashUserPhoto" src={currentUser?.avatar} alt={currentUser?.displayName || "Host"} loading="lazy" decoding="async" />
                 <div>
                   <h2>{currentUser?.displayName || (isSpanish ? "Host" : "Host")}</h2>
@@ -251,6 +258,14 @@ function HostDashboardPage({
         </aside>
 
         <section className="profileDashMain hostDashMain">
+          <div className="profileDashBackRow">
+            <button className="catalogClose" type="button" onClick={() => navigate("/")} aria-label={isSpanish ? "Volver" : "Back"}>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M14.5 6.5L9 12L14.5 17.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+
           <header className="profileDashHeading">
             <h1>{isSpanish ? "Dashboard del host" : "Host dashboard"}</h1>
             <p>{isSpanish ? "Panel de administracion con estadisticas en tiempo real." : "Administration panel with real-time statistics."}</p>
@@ -523,9 +538,9 @@ function HostDashboardPage({
             <section className="hostDashPanel">
               <h2>{isSpanish ? "Exportacion de datos" : "Data export"}</h2>
               <div className="hostDashExportActions">
-                <button type="button" className="profileDashSecondaryBtn">CSV</button>
-                <button type="button" className="profileDashSecondaryBtn">Excel</button>
-                <button type="button" className="profileDashSecondaryBtn">PDF</button>
+                <button type="button" className="profileDashSecondaryBtn" onClick={() => handleExport("CSV")}>CSV</button>
+                <button type="button" className="profileDashSecondaryBtn" onClick={() => handleExport("Excel")}>Excel</button>
+                <button type="button" className="profileDashSecondaryBtn" onClick={() => handleExport("PDF")}>PDF</button>
               </div>
             </section>
           )}
@@ -535,11 +550,18 @@ function HostDashboardPage({
               <h2>{isSpanish ? "Alertas y notificaciones" : "Alerts and notifications"}</h2>
               <ul className="hostDashReservationList">
                 <li>
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <strong>{isSpanish ? "Reserva nueva" : "New reservation"}</strong>
                     <p>{isSpanish ? "Cabana Bosque Azul · Sofia Martinez" : "Bosque Azul Cabin · Sofia Martinez"}</p>
                   </div>
-                  <span>{isSpanish ? "Ahora" : "Now"}</span>
+                  <div className="listingActions" style={{ gap: "8px" }}>
+                    <button className="profileDashSecondaryBtn" onClick={() => handleReservationAction("res-1", "accept")}>
+                      {isSpanish ? "Aceptar" : "Accept"}
+                    </button>
+                    <button className="profileDashSecondaryBtn danger" onClick={() => handleReservationAction("res-1", "cancel")}>
+                      {isSpanish ? "Rechazar" : "Reject"}
+                    </button>
+                  </div>
                 </li>
                 <li>
                   <div>
